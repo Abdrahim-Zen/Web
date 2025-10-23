@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Ordini - Amministratore</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <style>
+        .order-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: box-shadow 0.3s ease;
+        }
+        .order-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .status-badge {
+            font-size: 0.8em;
+            padding: 6px 12px;
+        }
+        .order-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 8px 8px 0 0;
+        }
+        .order-details {
+            padding: 15px;
+        }
+        .action-buttons {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <#include "header.ftl.html">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4">Gestione Ordini</h1>
+
+                <!-- Messaggi di successo/errore -->
+                <#if success??>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle"></i> ${success}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                </#if>
+
+                <#if error??>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> ${error}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                </#if>
+
+                <!-- Lista ordini -->
+                <#if ordini?? && ordini?size gt 0>
+                    <#list ordini as ordine>
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1">Ordine #${ordine.key}</h5>
+                                    <p class="mb-0 text-muted">
+                                        <i class="bi bi-calendar"></i> 
+                                        <#if ordine.dataOrdine??>
+                                            ${ordine.dataOrdine}
+                                        <#else>
+                                            Data non disponibile
+                                        </#if>
+                                    </p>
+                                </div>
+                                <div>
+                                    <span class="badge status-badge 
+                                        <#if ordine.stato??>
+                                            <#if ordine.stato == 'in_attesa'>bg-warning
+                                            <#elseif ordine.stato == 'approvato'>bg-info
+                                            <#elseif ordine.stato == 'spedito'>bg-primary
+                                            <#elseif ordine.stato == 'chiuso'>bg-success
+                                            <#elseif ordine.stato == 'rifiutato'>bg-danger
+                                            <#else>bg-secondary</#if>
+                                        <#else>
+                                            bg-secondary
+                                        </#if>">
+                                        ${ordine.stato!?upper_case}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="order-details">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h6>Informazioni Cliente</h6>
+                                    <p class="mb-1">
+                                        <strong>Email Utente:</strong> ${ordine.emailUtente!}
+                                    </p>
+                                    <p class="mb-1">
+                                        <strong>ID Prodotto Candidato:</strong> ${ordine.idProdottoCandidato!}
+                                    </p>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <h6>Stato Ordine</h6>
+                                    <p class="mb-1">
+                                        <strong>Stato:</strong> ${ordine.stato!}
+                                    </p>
+                                    <#if ordine.motivazioneRifiuto?? && ordine.motivazioneRifiuto != "">
+                                    <p class="mb-1">
+                                        <strong>Motivazione Rifiuto:</strong> ${ordine.motivazioneRifiuto!}
+                                    </p>
+                                    </#if>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <h6>Tecnico Assegnato</h6>
+                                    <#if ordine.emailTecnico?? && ordine.emailTecnico != "">
+                                    <p class="mb-1">
+                                        <strong>Email Tecnico:</strong> ${ordine.emailTecnico!}
+                                    </p>
+                                    <#else>
+                                    <p class="text-muted mb-1">
+                                        <i class="bi bi-person-x"></i> Nessun tecnico assegnato
+                                    </p>
+                                    </#if>
+                                </div>
+                            </div>
+                            
+                            <!-- Azioni -->
+                            <div class="action-buttons">
+                                <form action="gestioneOrdini" method="post" class="d-inline">
+                                    <input type="hidden" name="idOrdine" value="${ordine.key}">
+                                    <input type="hidden" name="azione" value="aggiornaStato">
+                                    
+                                    <#if ordine.stato??>
+                                        <#if ordine.stato == 'in_attesa'>
+                                        <button type="submit" class="btn btn-success btn-sm" name="stato" value="approvato">
+                                            <i class="bi bi-check-circle"></i> Approva
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" 
+                                                data-bs-target="#rifiutaModal" 
+                                                data-ordine-id="${ordine.key}">
+                                            <i class="bi bi-x-circle"></i> Rifiuta
+                                        </button>
+                                        </#if>
+                                        
+                                        <#if ordine.stato == 'approvato'>
+                                        <button type="submit" class="btn btn-primary btn-sm" name="stato" value="spedito">
+                                            <i class="bi bi-truck"></i> Segna come Spedito
+                                        </button>
+                                        </#if>
+                                        
+                                        <#if ordine.stato == 'spedito'>
+                                        <button type="submit" class="btn btn-success btn-sm" name="stato" value="chiuso">
+                                            <i class="bi bi-check-all"></i> Chiudi Ordine
+                                        </button>
+                                        </#if>
+                                    </#if>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    </#list>
+                    
+                <#else>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Nessun ordine presente nel sistema.
+                    </div>
+                </#if>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per rifiuto ordine -->
+    <div class="modal fade" id="rifiutaModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Rifiuta Ordine</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="gestioneOrdini" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" name="idOrdine" id="modalOrdineId">
+                        <input type="hidden" name="azione" value="aggiornaStato">
+                        <input type="hidden" name="stato" value="rifiutato">
+                        
+                        <div class="mb-3">
+                            <label for="motivazione" class="form-label">Motivazione del rifiuto:</label>
+                            <textarea class="form-control" id="motivazione" name="motivazione" rows="4" 
+                                      placeholder="Inserisci la motivazione per il rifiuto..." required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                        <button type="submit" class="btn btn-danger">Conferma Rifiuto</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Gestione modal rifiuto
+        const rifiutaModal = document.getElementById('rifiutaModal');
+        if (rifiutaModal) {
+            rifiutaModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const ordineId = button.getAttribute('data-ordine-id');
+                const modalOrdineId = document.getElementById('modalOrdineId');
+                modalOrdineId.value = ordineId;
+            });
+        }
+
+        // Auto-dismiss degli alert dopo 5 secondi
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html>

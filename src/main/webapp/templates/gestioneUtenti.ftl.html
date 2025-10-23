@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Gestione utenti</title>
+        <style>
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 15px;
+            }
+            th, td {
+                border: 1px solid #ccc;
+                padding: 8px;
+                text-align: left;
+            }
+            th {
+                background-color: #f0f0f0;
+            }
+            #formAggiungiUtente {
+                display: none;
+                margin-top: 20px;
+                padding: 15px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background-color: #f9f9f9;
+            }
+            #campoTecnico {
+                display: none;
+                margin-top: 10px;
+            }
+        </style>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" 
+              crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    </head>
+    <body>
+        <div class="container mt-4">
+            <#include "header.ftl.html">
+            
+            <h1>Utenti Associati</h1>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Nome</th>
+                        <th>Cognome</th>
+                       
+                        <th>Modifica</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <#list utenti as u>
+                    <tr>
+                        <td>${u.email}</td>
+                        <td>${u.nome}</td>
+                        <td>${u.cognome}</td>
+                        
+                        <td>
+                            <form action="gestioneUtenti" method="post" style="display: inline;">
+                                <input type="hidden" name="emailUtente" value="${u.email}">
+                                <button type="submit" class="btn btn-danger btn-sm" name="azione" value="elimina">
+                                    Elimina
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </#list>
+                </tbody>
+            </table>
+            
+            <h1>Tecnici Associati</h1>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Nome</th>
+                        <th>Cognome</th>
+                       
+                        <th>Modifica</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <#list tecnici as t>
+                    <tr>
+                        <td>${t.email}</td>
+                        <td>${t.nome}</td>
+                        <td>${t.cognome}</td>
+                        
+                        <td>
+                            <form action="gestioneUtenti" method="post" style="display: inline;">
+                                <input type="hidden" name="emailUtente" value="${t.email}">
+                                <button type="submit" class="btn btn-danger btn-sm" name="azione" value="elimina">
+                                    Elimina
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </#list>
+                </tbody>
+            </table>
+
+            <!-- Bottone per mostrare il form di aggiunta utente -->
+            <button id="bottoneAggiungi" class="btn btn-success mt-3">
+                <i class="bi bi-plus-circle"></i> Aggiungi Utente
+            </button>
+
+            <!-- Form per aggiungere un nuovo utente (inizialmente nascosto) -->
+            <form id="formAggiungiUtente" action="gestioneUtenti" method="post">
+                <h4 class="mt-4">Aggiungi Nuovo Utente</h4>
+                
+                <!-- Selezione tipo utente -->
+                <div class="mb-3">
+                    <label class="form-label">Tipo Utente:</label>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="tipoUtente" id="utenteRegistrato" value="utenteRegistrato" checked>
+                            <label class="form-check-label" for="utenteRegistrato">
+                                Utente Registrato
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="tipoUtente" id="tecnico" value="tecnico">
+                            <label class="form-check-label" for="tecnico">
+                                Tecnico
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campi comuni a tutti gli utenti -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email:</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome:</label>
+                            <input type="text" class="form-control" id="nome" name="nome" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="cognome" class="form-label">Cognome:</label>
+                            <input type="text" class="form-control" id="cognome" name="cognome" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password:</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campo specifico per tecnico (nascosto di default) -->
+                <div id="campoTecnico" class="mb-3">
+                    <label for="dataAssunzione" class="form-label">Data Assunzione:</label>
+                    <input type="date" class="form-control" id="dataAssunzione" name="dataAssunzione">
+                </div>
+
+                
+
+                <button type="submit" class="btn btn-primary" name="azione" value="aggiungi">Aggiungi</button>
+                <button type="button" id="annullaAggiungi" class="btn btn-secondary">Annulla</button>
+            </form>
+        </div>
+
+        <script>
+            // Mostra il form quando si clicca sul bottone "Aggiungi Utente"
+            document.getElementById('bottoneAggiungi').addEventListener('click', function() {
+                var form = document.getElementById('formAggiungiUtente');
+                form.style.display = 'block';
+            });
+
+            // Nasconde il form quando si clicca su "Annulla"
+            document.getElementById('annullaAggiungi').addEventListener('click', function() {
+                var form = document.getElementById('formAggiungiUtente');
+                form.style.display = 'none';
+            });
+
+            // Mostra/nascondi campi specifici in base al tipo di utente selezionato
+            document.querySelectorAll('input[name="tipoUtente"]').forEach(function(radio) {
+                radio.addEventListener('change', function() {
+                    var campoTecnico = document.getElementById('campoTecnico');
+                    var campoBudget = document.getElementById('campoBudget');
+                    
+                    if (this.value === 'tecnico') {
+                        campoTecnico.style.display = 'block';
+                        campoBudget.style.display = 'none';
+                    } else {
+                        campoTecnico.style.display = 'none';
+                        campoBudget.style.display = 'block';
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>

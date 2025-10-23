@@ -1,0 +1,45 @@
+
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Login</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="style\style2.css">
+        <#include "head.html">
+        
+    </head>
+    <body>
+        <div class="contenitore">
+            <#include "header.ftl.html">
+            <form id="form" method="get"  action="amministratore">
+                
+                    
+                        <div class="row justify-content-center">
+                            <div class="col-3">
+                                <button type="submit" class="task" name="azione" value="gestione utenti" >
+                                   Gestione utenti
+                                </button>
+                            </div>
+                            <div class="col-3">
+                                <button type="submit" class="task" name="azione" value="gestione prodotti" >
+                                    Gestione prodotti
+                                </button>
+                             </div>
+                            
+                            <div class="col-3">
+                                <button type="submit" class="task" name="azione" value="gestione ordini">
+                                    Gestione ordini
+                                </button>
+                             </div>
+                        </div>
+                   
+               
+            </form>
+
+        </div>
+
+
+    </body>
+</html>
