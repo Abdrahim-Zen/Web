@@ -20,6 +20,13 @@ public class CategoriaImpl extends DataItemImpl<Integer> implements Categoria {
         specifiche = new ArrayList<>();
     }
     
+    
+    public CategoriaImpl(String x) {
+        super();
+        this.nome = x;
+        specifiche = new ArrayList<>();
+    }
+    
     @Override
     public String getNomeCategoria() {
         return nome; 

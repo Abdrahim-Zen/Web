@@ -17,6 +17,7 @@ public interface RichiestaAcquisto extends DataItem<Integer> {
     Categoria getCategoria();
 
     void setCategorai(Categoria x);
+    void setCategorai(String x);
 
     UtenteRegistrato getUtenteRegistrato();
 

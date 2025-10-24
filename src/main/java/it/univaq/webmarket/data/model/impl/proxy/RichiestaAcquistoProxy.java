@@ -30,6 +30,12 @@ public class RichiestaAcquistoProxy extends RichiestaAcquistoImpl implements Dat
         super.setCategorai(x);
         setModified(true);
     }
+    
+      @Override
+    public void setCategorai(String x) {
+        super.setCategorai(x);
+        setModified(true);
+    }
 
     @Override
     public void setUtenteRegistrato(UtenteRegistrato x) {

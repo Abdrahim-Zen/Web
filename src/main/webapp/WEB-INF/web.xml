@@ -33,6 +33,7 @@
         <servlet-name>RichiestaAcquisto</servlet-name>
         <servlet-class>it.univaq.webmarket.controller.RichiestaAcquistoController</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>StatoRichieste</servlet-name>
         <servlet-class>it.univaq.webmarket.controller.StatoRichiesteController</servlet-class>
@@ -49,6 +50,11 @@
     </servlet>
     
     <servlet>
+        <servlet-name>richiesteTecnico</servlet-name>
+        <servlet-class>it.univaq.webmarket.controller.RichiesteTecnicoController</servlet-class>
+    </servlet>
+    
+    <servlet>
         <servlet-name>gestioneUtenti</servlet-name>
         <servlet-class>it.univaq.webmarket.controller.GestioneUtenti</servlet-class>
     </servlet>
@@ -56,6 +62,11 @@
     <servlet-mapping>
         <servlet-name>StatoRichieste</servlet-name>
         <url-pattern>/statoRichieste</url-pattern>
+    </servlet-mapping>
+    
+        <servlet-mapping>
+        <servlet-name>richiesteTecnico</servlet-name>
+        <url-pattern>/richiesteTecnico</url-pattern>
     </servlet-mapping>
     
     <servlet-mapping>

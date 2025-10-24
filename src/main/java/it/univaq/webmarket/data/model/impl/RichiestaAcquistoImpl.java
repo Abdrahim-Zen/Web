@@ -102,5 +102,10 @@ public class RichiestaAcquistoImpl extends DataItemImpl<Integer> implements Rich
     public String getValore() {
        return valore; 
     }
+
+    @Override
+    public void setCategorai(String x) {
+        categoria= new CategoriaImpl(x);
+    }
     
 }

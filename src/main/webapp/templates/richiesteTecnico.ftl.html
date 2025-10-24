@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <#include "head.html">
+    </head>
+    <body>
+        <div class="container mt-4">
+            <#include "header.ftl.html">
+            <h2>Le tue richieste di acquisto</h2>
+            <table>
+                <thead>
+                    <tr>
+                       
+                        <th>Categoria</th>
+                        <th>Note</th>
+                        <th>Stato</th>
+                        <th>Data Inserimento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <#list lista as r>
+                    <tr>
+                        
+                        <td>${r.categoria.nomeCategoria}</td>
+                        <td>${r.note!""}</td>
+                        <td>${r.stato}</td>
+                        <td>${r.dataInserimento?string("dd/MM/yyyy")}</td>
+
+                    </tr>
+                    <#else>
+                    <tr>
+                        <td colspan="6">Nessuna richiesta trovata</td>
+                    </tr>
+                    </#list>
+                </tbody>
+            </table>
+
+        </div>
+    </body>
+</html>

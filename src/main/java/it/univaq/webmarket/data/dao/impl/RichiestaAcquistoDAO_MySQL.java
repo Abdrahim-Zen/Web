@@ -32,6 +32,7 @@ public class RichiestaAcquistoDAO_MySQL extends DAO implements RichiestaAcquisto
     PreparedStatement uRichiesta;
     PreparedStatement sRichiestaByUtente;
     PreparedStatement sRichiestaById;
+    PreparedStatement sRichiestaNonPreseInCarico;
     public RichiestaAcquistoDAO_MySQL(DataLayer d) {
         super(d);
     }
@@ -47,7 +48,8 @@ public class RichiestaAcquistoDAO_MySQL extends DAO implements RichiestaAcquisto
                     "UPDATE richiestaAcquisto SET ID_utente=?, ID_categoria=?, importo_totale=?, stato=?, version=?,note=?  "
                     + "WHERE ID=? AND version=? ");
             sRichiestaByUtente= connection.prepareStatement("SELECT * FROM richiestaAcquisto WHERE ID_utente=? ");
-            sRichiestaById=connection.prepareStatement("SELECT * FROM richiestaAcquisto WHERE ID=? ");
+            sRichiestaById=connection.prepareStatement("SELECT * FROM richiestaAcquisto r JOIN categoria c ON r.ID_categoria = c.ID WHERE r.ID=? ");
+            sRichiestaNonPreseInCarico=connection.prepareStatement(" SELECT * FROM  richiestaAcquisto WHERE stato = 'in_attesa' ");
         } catch (SQLException ex) {
             Logger.getLogger(RichiestaAcquistoDAO_MySQL.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -157,6 +159,16 @@ public class RichiestaAcquistoDAO_MySQL extends DAO implements RichiestaAcquisto
        return richiesta;
         
     }
+    
+    public List<RichiestaAcquisto> getRichiesteNonAssociate() throws SQLException{
+      ArrayList<RichiestaAcquisto> lista= new ArrayList<>();
+      ResultSet rs = sRichiestaNonPreseInCarico.executeQuery();
+      while(rs.next()){
+          lista.add(getRichiestaById(rs.getInt("ID")));
+      }
+      return lista;
+    }
+    
 
     private RichiestaAcquisto createRichiesta(ResultSet rs) throws SQLException {
         RichiestaAcquistoProxy richiesta = (RichiestaAcquistoProxy) createRichiesta();
@@ -166,6 +178,7 @@ public class RichiestaAcquistoDAO_MySQL extends DAO implements RichiestaAcquisto
         richiesta.setImporto(rs.getDouble("importo_totale"));
         richiesta.setNote(rs.getString("note"));
         richiesta.setStato(rs.getString("stato"));
+        richiesta.setCategorai(rs.getString("nome"));
         richiesta.setDataInserimento(rs.getTimestamp("data_inserimento"));
         return richiesta;
        
