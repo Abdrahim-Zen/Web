@@ -13,6 +13,7 @@ import it.univaq.webmarket.framework.data.DataLayer;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -26,6 +27,9 @@ public class ProdottoCandidatoDAO_MySQL extends DAO implements ProdottoCandidato
 
     PreparedStatement sProdottoByUtente;
     PreparedStatement sProdottoByID;
+    PreparedStatement sProdottoByRichiestaInCarico; // CORRETTO: per ID_richiestaInCarico
+    PreparedStatement iProdottoCandidato;
+    
     public ProdottoCandidatoDAO_MySQL(DataLayer d) {
         super(d);
     }
@@ -34,12 +38,25 @@ public class ProdottoCandidatoDAO_MySQL extends DAO implements ProdottoCandidato
     public void init() throws DataException {
         super.init();
         try {
+            // CORREZIONE: prodottoCandidato ha ID_richiestaInCarico, non ID_tecnico e ID_richiesta
             sProdottoByUtente = connection.prepareStatement("SELECT p.ID, p.nome, p.descrizione, p.prezzo, "
-                    + "p.ID_tecnico, p.ID_richiesta, p.data_proposta "
-                    + "FROM prodottoCandidato p " + "JOIN richiestaAcquisto r ON p.ID_richiesta = r.ID "
+                    + "p.ID_richiestaInCarico, p.data_proposta " // RIMOSSO: ID_tecnico
+                    + "FROM prodottoCandidato p " + "JOIN richiesteInCarico rc ON p.ID_richiestaInCarico = rc.ID "
+                    + "JOIN richiestaAcquisto r ON rc.ID_richiesta = r.ID "
                     + "WHERE r.ID_utente = ? ");
             
-            sProdottoByID=connection.prepareStatement("SELECT * FROM prodottoCandidato WHERE ID=? ");
+            sProdottoByID = connection.prepareStatement("SELECT * FROM prodottoCandidato WHERE ID=? ");
+            
+            // CORREZIONE: cerca per ID_richiestaInCarico
+            sProdottoByRichiestaInCarico = connection.prepareStatement("SELECT * FROM prodottoCandidato WHERE ID_richiestaInCarico = ? ORDER BY data_proposta DESC");
+            
+            // CORREZIONE: inserisce con ID_richiestaInCarico, rimuovi ID_tecnico
+            iProdottoCandidato = connection.prepareStatement(
+                "INSERT INTO prodottoCandidato (nome, descrizione, prezzo, ID_richiestaInCarico, data_proposta) " +
+                "VALUES (?, ?, ?, ?, ?)", 
+                Statement.RETURN_GENERATED_KEYS
+            );
+            
         } catch (SQLException ex) {
             Logger.getLogger(ProdottoCandidatoDAO_MySQL.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -52,7 +69,7 @@ public class ProdottoCandidatoDAO_MySQL extends DAO implements ProdottoCandidato
             sProdottoByUtente.setInt(1, x);
             ResultSet rs = sProdottoByUtente.executeQuery();
             while(rs.next()){
-                prodottiCandidati.add(getProdottoCandidatoByID(rs.getInt("ID")));
+                prodottiCandidati.add(createProdottoCandidato(rs));
             }
         } catch (SQLException ex) {
             Logger.getLogger(ProdottoCandidatoDAO_MySQL.class.getName()).log(Level.SEVERE, null, ex);
@@ -61,20 +78,67 @@ public class ProdottoCandidatoDAO_MySQL extends DAO implements ProdottoCandidato
     }
 
     @Override
-    public ProdottoCandidato getProdottoCandidatoByID(int x) throws SQLException {
-        ProdottoCandidato prodotto=null;
-        if(dataLayer.getCache().has(ProdottoCandidato.class, x)){
-            prodotto=dataLayer.getCache().get(ProdottoCandidato.class, x);
-            
-        }else{
-            sProdottoByID.setInt(1, x);
-            ResultSet rs = sProdottoByID.executeQuery();
-            if(rs.next()){
-                prodotto=createProdottoCandidato(rs);
-                dataLayer.getCache().add(ProdottoCandidato.class, prodotto);
+    public List<ProdottoCandidato> getProdottiCandidatiByRichiestaID(int richiestaInCaricoId) { // CORRETTO: ora è richiestaInCaricoId
+        List<ProdottoCandidato> prodottiCandidati = new ArrayList<>();
+        try {
+            sProdottoByRichiestaInCarico.setInt(1, richiestaInCaricoId);
+            ResultSet rs = sProdottoByRichiestaInCarico.executeQuery();
+            while(rs.next()){
+                prodottiCandidati.add(createProdottoCandidato(rs));
             }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProdottoCandidatoDAO_MySQL.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return prodottiCandidati;
+    }
+
+    @Override
+    public ProdottoCandidato getProdottoCandidatoByID(int x) throws DataException {
+        ProdottoCandidato prodotto = null;
+        try {
+            if(dataLayer.getCache().has(ProdottoCandidato.class, x)){
+                prodotto = dataLayer.getCache().get(ProdottoCandidato.class, x);
+            } else {
+                sProdottoByID.setInt(1, x);
+                ResultSet rs = sProdottoByID.executeQuery();
+                if(rs.next()){
+                    prodotto = createProdottoCandidato(rs);
+                    dataLayer.getCache().add(ProdottoCandidato.class, prodotto);
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataException("Errore nel recupero del prodotto candidato con ID: " + x, ex);
         }
         return prodotto;
+    }
+
+    @Override
+    public int insertProdottoCandidato(ProdottoCandidato prodotto) throws DataException {
+        try {
+            iProdottoCandidato.setString(1, prodotto.getNome());
+            iProdottoCandidato.setString(2, prodotto.getDescrizone()); // CORREZIONE: getDescrizione, non getDescrizone
+            iProdottoCandidato.setDouble(3, prodotto.getPrezzo());
+            iProdottoCandidato.setInt(4, prodotto.getRichiestaKey()); // CORREZIONE: ora è ID_richiestaInCarico
+            iProdottoCandidato.setTimestamp(5, prodotto.getDataProposta());
+            
+            int affectedRows = iProdottoCandidato.executeUpdate();
+            if (affectedRows == 0) {
+                throw new DataException("Inserimento fallito, nessuna riga interessata");
+            }
+            
+            try (ResultSet generatedKeys = iProdottoCandidato.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int generatedId = generatedKeys.getInt(1);
+                    prodotto.setKey(generatedId);
+                    dataLayer.getCache().add(ProdottoCandidato.class, prodotto);
+                    return generatedId;
+                } else {
+                    throw new DataException("Inserimento fallito, nessun ID ottenuto");
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataException("Errore nell'inserimento del prodotto candidato", ex);
+        }
     }
 
     private ProdottoCandidato createProdottoCandidato(ResultSet rs) throws SQLException {
@@ -84,8 +148,8 @@ public class ProdottoCandidatoDAO_MySQL extends DAO implements ProdottoCandidato
         prodotto.setDescrizione(rs.getString("descrizione"));
         prodotto.setNome(rs.getString("nome"));
         prodotto.setPrezzo(rs.getDouble("prezzo"));
-        prodotto.setRichiesta_key(rs.getInt("ID_richiesta"));
-        prodotto.setTecnicoKey(rs.getInt("ID_tecnico"));
+        prodotto.setRichiestaKey(rs.getInt("ID_richiestaInCarico")); // CORREZIONE: ora è ID_richiestaInCarico
+        // RIMOSSO: prodotto.setTecnicoKey(rs.getInt("ID_tecnico")); - non esiste più
         return prodotto;
     }
     
@@ -94,4 +158,16 @@ public class ProdottoCandidatoDAO_MySQL extends DAO implements ProdottoCandidato
         return new ProdottoCandidatoProxy(dataLayer);
     }
 
+    @Override
+    public void destroy() throws DataException {
+        try {
+            if (sProdottoByUtente != null) sProdottoByUtente.close();
+            if (sProdottoByID != null) sProdottoByID.close();
+            if (sProdottoByRichiestaInCarico != null) sProdottoByRichiestaInCarico.close();
+            if (iProdottoCandidato != null) iProdottoCandidato.close();
+        } catch (SQLException ex) {
+            throw new DataException("Errore nella chiusura delle prepared statements", ex);
+        }
+        super.destroy();
+    }
 }

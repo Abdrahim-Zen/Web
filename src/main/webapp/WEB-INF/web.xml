@@ -16,6 +16,12 @@
         <servlet-name>utenteRegistrato</servlet-name>
         <servlet-class>it.univaq.webmarket.controller.UtenteRegistratoController</servlet-class>
     </servlet>
+    
+     <servlet>
+        <servlet-name>gestioneProdotti</servlet-name>
+        <servlet-class>it.univaq.webmarket.controller.GestioneProdottiController</servlet-class>
+    </servlet>
+    
     <servlet>
         <servlet-name>amministratore</servlet-name>
         <servlet-class>it.univaq.webmarket.controller.AmministratoreController</servlet-class>
@@ -97,6 +103,11 @@
     <servlet-mapping>
         <servlet-name>ProdottoCandidato</servlet-name>
         <url-pattern>/prodottoCandidato</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>gestioneProdotti</servlet-name>
+        <url-pattern>/gestioneProdotti</url-pattern>
     </servlet-mapping>
     
     <servlet-mapping>

@@ -7,6 +7,7 @@ package it.univaq.webmarket.data.dao.impl;
 import it.univaq.webmarket.data.dao.AmministratoreDAO;
 import it.univaq.webmarket.data.dao.CategoriaDAO;
 import it.univaq.webmarket.data.dao.OrdineDAO;
+import it.univaq.webmarket.data.dao.PresaInCaricoDAO;
 import it.univaq.webmarket.data.dao.ProdottoCandidatoDAO;
 import it.univaq.webmarket.data.dao.ProdottoDAO;
 import it.univaq.webmarket.data.dao.SpecificaCategoriaDAO;
@@ -28,6 +29,7 @@ import it.univaq.webmarket.data.dao.ValoreSpecificaRichiestaDAO;
 import it.univaq.webmarket.data.model.Amministratore;
 import it.univaq.webmarket.data.model.Categoria;
 import it.univaq.webmarket.data.model.Ordine;
+import it.univaq.webmarket.data.model.PresaInCarico;
 import it.univaq.webmarket.data.model.ProdottoCandidato;
 import it.univaq.webmarket.data.model.ValoreSpecificaRichiesta;
 
@@ -54,11 +56,16 @@ public class WebMarketDataLayer extends DataLayer {
         registerDAO(ProdottoCandidato.class, new ProdottoCandidatoDAO_MySQL(this));
         registerDAO(Amministratore.class, new AmministratoreDAO_MySQL(this));
         registerDAO(Ordine.class,new OrdineDAO_MySQL(this));
+        registerDAO(PresaInCarico.class,new PresaInCaricoDAO_MySQL(this));
 
     }
 
     public UtenteDAO getUtenteDAO() {
         return (UtenteDAO) getDAO(Utente.class);
+    }
+    
+    public PresaInCaricoDAO getPresaInCaricoDAO() {
+        return (PresaInCaricoDAO) getDAO(PresaInCarico.class);
     }
     
     public OrdineDAO getOrdineDAO(){

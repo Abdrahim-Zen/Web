@@ -5,6 +5,7 @@
 package it.univaq.webmarket.data.dao;
 
 import it.univaq.webmarket.data.model.ProdottoCandidato;
+import it.univaq.webmarket.framework.data.DataException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -13,7 +14,13 @@ import java.util.List;
  * @author abdrahimzeno
  */
 public interface ProdottoCandidatoDAO {
-    public List<ProdottoCandidato> getProdottiCandidatiByUserID(int x);
-    public ProdottoCandidato getProdottoCandidatoByID(int x ) throws SQLException;
-    public ProdottoCandidato createProdottoCandidato();
+      List<ProdottoCandidato> getProdottiCandidatiByUserID(int userId);
+    
+    List<ProdottoCandidato> getProdottiCandidatiByRichiestaID(int richiestaId);
+    
+    ProdottoCandidato getProdottoCandidatoByID(int id) throws DataException;
+    
+    int insertProdottoCandidato(ProdottoCandidato prodotto) throws DataException;
+    
+    ProdottoCandidato createProdottoCandidato();
 }

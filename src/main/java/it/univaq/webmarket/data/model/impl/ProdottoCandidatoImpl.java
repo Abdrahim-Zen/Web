@@ -9,7 +9,6 @@ import it.univaq.webmarket.data.model.RichiestaAcquisto;
 import it.univaq.webmarket.data.model.TecnicoIncaricato;
 import it.univaq.webmarket.framework.data.DataItemImpl;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 /**
  *
@@ -19,19 +18,24 @@ public class ProdottoCandidatoImpl extends DataItemImpl<Integer> implements Prod
     private String nome;
     private String descrizione;
     private Double prezzo;
-    private Timestamp  dataProposta;
+    private Timestamp dataProposta;
+    private int tecnicoKey;
+    private int richiestaKey;
     private TecnicoIncaricato tecnicoIncaricato;
     private RichiestaAcquisto richiestaAcquisto;
     
     public ProdottoCandidatoImpl(){
         super();
-        nome=null;
-        descrizione=null;
-        prezzo=null;
-        dataProposta=null;
-        tecnicoIncaricato=null;
-        richiestaAcquisto=null;
+        nome = null;
+        descrizione = null;
+        prezzo = null;
+        dataProposta = null;
+        tecnicoKey = 0;
+        richiestaKey = 0;
+        tecnicoIncaricato = null;
+        richiestaAcquisto = null;
     }
+    
     @Override
     public String getNome() {
         return nome; 
@@ -39,17 +43,17 @@ public class ProdottoCandidatoImpl extends DataItemImpl<Integer> implements Prod
 
     @Override
     public void setNome(String x) {
-        this.nome=x; 
+        this.nome = x; 
     }
 
     @Override
-    public String getDescrizone() {
-        return  descrizione; 
+    public String getDescrizone() { 
+        return descrizione; 
     }
 
     @Override
     public void setDescrizione(String x) {
-        this.descrizione=x; 
+        this.descrizione = x; 
     }
 
     @Override
@@ -59,7 +63,7 @@ public class ProdottoCandidatoImpl extends DataItemImpl<Integer> implements Prod
 
     @Override
     public void setPrezzo(Double x) {
-        this.prezzo=x; 
+        this.prezzo = x; 
     }
 
     @Override
@@ -68,18 +72,41 @@ public class ProdottoCandidatoImpl extends DataItemImpl<Integer> implements Prod
     }
 
     @Override
-    public void setDataProposta(Timestamp  x) {
-        this.dataProposta=x; 
+    public void setDataProposta(Timestamp x) {
+        this.dataProposta = x; 
     }
 
     @Override
-    public TecnicoIncaricato getTecnicoIncTecnico() {
-       return tecnicoIncaricato; 
+    public int getTecnicoKey() {
+        return tecnicoKey;
+    }
+
+    @Override
+    public void setTecnicoKey(int key) {
+        this.tecnicoKey = key;
+    }
+
+    @Override
+    public int getRichiestaKey() {
+        return richiestaKey;
+    }
+
+    @Override
+    public void setRichiestaKey(int key) {
+        this.richiestaKey = key;
+    }
+
+    @Override
+    public TecnicoIncaricato getTecnicoIncaricato() {
+        return tecnicoIncaricato; 
     }
 
     @Override
     public void setTecnicoIncaricato(TecnicoIncaricato x) {
-        this.tecnicoIncaricato=x; 
+        this.tecnicoIncaricato = x;
+        if (x != null) {
+            this.tecnicoKey = x.getKey();
+        }
     }
 
     @Override
@@ -89,7 +116,22 @@ public class ProdottoCandidatoImpl extends DataItemImpl<Integer> implements Prod
 
     @Override
     public void setRichiestaAcquisto(RichiestaAcquisto x) {
-        this.richiestaAcquisto=x; 
+        this.richiestaAcquisto = x;
+        if (x != null) {
+            this.richiestaKey = x.getKey();
+        }
     }
     
+    @Override
+    public String toString() {
+        return "ProdottoCandidatoImpl{" +
+                "key=" + getKey() +
+                ", nome='" + nome + '\'' +
+                ", descrizione='" + descrizione + '\'' +
+                ", prezzo=" + prezzo +
+                ", dataProposta=" + dataProposta +
+                ", tecnicoKey=" + tecnicoKey +
+                ", richiestaKey=" + richiestaKey +
+                '}';
+    }
 }

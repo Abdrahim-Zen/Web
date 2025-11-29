@@ -9,6 +9,7 @@ import it.univaq.webmarket.data.model.RichiestaAcquisto;
 import it.univaq.webmarket.framework.data.DataException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -19,4 +20,15 @@ public interface RichiestaAcquistoDAO {
  RichiestaAcquisto createRichiesta();
  public List<RichiestaAcquisto> getRichiesteByUtenteId(int utenteid);
  public List<RichiestaAcquisto> getRichiesteNonAssociate() throws SQLException;
+ /**
+ * Ottiene le richieste non ancora assegnate a nessun tecnico
+ */
+RichiestaAcquisto getRichiestaAcquistoByID(int id) throws DataException;
+
+/**
+ * Aggiorna una richiesta acquisto esistente
+ */
+void updateRichiestaAcquisto(RichiestaAcquisto richiesta) throws DataException;
+
+public List<Map<String, String>> getSpecificheByRichiestaId(int idRichiesta) throws DataException;
 }

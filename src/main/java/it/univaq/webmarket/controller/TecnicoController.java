@@ -40,7 +40,7 @@ public class TecnicoController extends ApplicationBaseController {
         if ("a".equals(azione)) {
           response.sendRedirect("richiesteTecnico");
         }  else if ("b".equals(azione)) {
-         
+            response.sendRedirect("gestioneProdotti");
 
         } else {
             action_default(request, response);

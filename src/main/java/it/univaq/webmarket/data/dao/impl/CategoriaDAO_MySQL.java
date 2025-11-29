@@ -32,7 +32,7 @@ public class CategoriaDAO_MySQL extends DAO implements CategoriaDAO {
     public void init() throws DataException {
         try {
             super.init();
-            sAllCategorie = connection.prepareStatement("SELECT * FROM categoria c JOIN ");
+            sAllCategorie = connection.prepareStatement("SELECT * FROM categoria   ");
             sCategoriaById = connection.prepareStatement("SELECT * FROM categoria WHERE ID = ?");
             iCategoria = connection.prepareStatement("INSERT INTO categoria (nome) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
             uCategoria = connection.prepareStatement("UPDATE categoria SET nome = ? WHERE ID = ?");

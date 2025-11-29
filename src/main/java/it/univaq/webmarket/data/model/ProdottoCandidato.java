@@ -21,10 +21,18 @@ public interface ProdottoCandidato extends DataItem<Integer>{
     Double getPrezzo();
     void setPrezzo(Double x);
     
-    Timestamp  getDataProposta();
-    void setDataProposta(Timestamp  x);
+    Timestamp getDataProposta();
+    void setDataProposta(Timestamp x);
     
-    TecnicoIncaricato getTecnicoIncTecnico();
+    // Metodi per le chiavi esterne
+    int getTecnicoKey();
+    void setTecnicoKey(int key);
+    
+    int getRichiestaKey();
+    void setRichiestaKey(int key);
+    
+    // Relazioni (opzionali - per lazy loading)
+    TecnicoIncaricato getTecnicoIncaricato();
     void setTecnicoIncaricato(TecnicoIncaricato x);
     
     RichiestaAcquisto getRichiestaAcquisto();

@@ -19,8 +19,7 @@ public class ProdottoCandidatoProxy extends ProdottoCandidatoImpl implements Dat
 
     protected boolean modified;
     protected DataLayer dataLayer;
-    protected int tecnico_key;
-    protected int richiesta_key;
+    
     public ProdottoCandidatoProxy(DataLayer d) {
         super();
         this.modified = false;
@@ -40,17 +39,21 @@ public class ProdottoCandidatoProxy extends ProdottoCandidatoImpl implements Dat
     }
     
     @Override
-    public void setDataProposta(Timestamp  x){
+    public void setDataProposta(Timestamp x){
         super.setDataProposta(x);
         setModified(true);
     }
     
+    @Override
     public void setTecnicoKey(int x){
-        this.tecnico_key=x;
+        super.setTecnicoKey(x);
+        setModified(true);
     }
     
-    public void setRichiesta_key(int x){
-        this.richiesta_key=x;
+    @Override
+    public void setRichiestaKey(int x){
+        super.setRichiestaKey(x);
+        setModified(true);
     }
     
     @Override
@@ -59,6 +62,17 @@ public class ProdottoCandidatoProxy extends ProdottoCandidatoImpl implements Dat
         setModified(true);
     }
     
+    @Override
+    public void setTecnicoIncaricato(TecnicoIncaricato x) {
+        super.setTecnicoIncaricato(x);
+        setModified(true);
+    }
+    
+    @Override
+    public void setRichiestaAcquisto(RichiestaAcquisto x) {
+        super.setRichiestaAcquisto(x);
+        setModified(true);
+    }
 
     @Override
     public boolean isModified() {
@@ -69,5 +83,4 @@ public class ProdottoCandidatoProxy extends ProdottoCandidatoImpl implements Dat
     public void setModified(boolean dirty) {
         this.modified = dirty;
     }
-
 }
