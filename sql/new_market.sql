@@ -78,6 +78,7 @@ CREATE TABLE richiesteInCarico (
     ID_tecnico INT UNSIGNED NOT NULL,
     ID_richiesta INT UNSIGNED NOT NULL,
     data_incarico TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    completato BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (ID_tecnico) REFERENCES tecnico(ID)  ON DELETE CASCADE,
     FOREIGN KEY (ID_richiesta) REFERENCES richiestaAcquisto(ID) ON DELETE CASCADE,
     UNIQUE (ID_tecnico, ID_richiesta) -- evita duplicati tra tecnico e richiesta
