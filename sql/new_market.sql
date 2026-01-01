@@ -88,9 +88,11 @@ CREATE TABLE prodottoCandidato (
     ID INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(255) NOT NULL,
     descrizione TEXT,
+    motivazione TEXT,
     prezzo DECIMAL(10,2) NOT NULL,
     ID_richiestaInCarico INT UNSIGNED NOT NULL,
     data_proposta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    stato ENUM('in_attesa', 'accettato', 'rifiutato') NOT NULL DEFAULT 'in_attesa',
     FOREIGN KEY (ID_richiestaInCarico) REFERENCES richiesteInCarico(ID) ON DELETE CASCADE
 );
 
@@ -104,7 +106,6 @@ CREATE TABLE ordine (
     FOREIGN KEY (ID_utente) REFERENCES utenteRegistrato(ID) ON DELETE CASCADE,
     FOREIGN KEY (ID_prodotto_candidato) REFERENCES prodottoCandidato(ID) ON DELETE CASCADE
 );
-
 
 
 
