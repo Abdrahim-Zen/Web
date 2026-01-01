@@ -14,6 +14,7 @@ public class PresaInCaricoProxy extends PresaInCaricoImpl implements DataItemPro
     protected boolean modified;
     protected DataLayer dataLayer;
 
+
     public PresaInCaricoProxy(DataLayer d) {
         super();
         this.modified = false;
@@ -29,6 +30,12 @@ public class PresaInCaricoProxy extends PresaInCaricoImpl implements DataItemPro
     @Override
     public void setStato(String stato) {
         super.setStato(stato);
+        setModified(true);
+    }
+    
+    @Override
+    public void setMotivazione(String x){
+        super.setMotivazione(x);
         setModified(true);
     }
 
@@ -61,5 +68,10 @@ public class PresaInCaricoProxy extends PresaInCaricoImpl implements DataItemPro
     @Override
     public void setModified(boolean dirty) {
         this.modified = dirty;
+    }
+
+    public void setIdProdotto(String string) {
+       super.seIdProdotto(string);
+        setModified(true);
     }
 }

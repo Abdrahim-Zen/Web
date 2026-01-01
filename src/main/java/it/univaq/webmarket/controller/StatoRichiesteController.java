@@ -43,9 +43,25 @@ public class StatoRichiesteController extends ApplicationBaseController {
         WebMarketDataLayer dl = (WebMarketDataLayer) request.getAttribute("datalayer");
         Integer idUtente = (Integer) session.getAttribute("userid");
         String username = (String) session.getAttribute("username");
+        Map<String, Object> datamodel = new HashMap<>();
 
         List<RichiestaAcquisto> richieste = dl.getRichiestaAcquistoDAO().getRichiesteByUtenteId(idUtente);
-        Map<String, Object> datamodel = new HashMap<>();
+
+        for (RichiestaAcquisto richiesta : richieste) {
+            try {
+                // Recupera le specifiche della richiesta usando il nuovo metodo
+                List<Map<String, String>> specifiche
+                        = dl.getRichiestaAcquistoDAO().getSpecificheByRichiestaId(richiesta
+                                .getKey());
+
+                datamodel.put("specificheRichiesta_" + richiesta.getKey(), specifiche);
+
+            } catch (Exception e) {
+                System.err.println("Errore nel recupero specifiche: " + e.getMessage());
+
+            }
+
+        }
         String type = (String) session.getAttribute("userType");
         datamodel.put("userType", type);
         datamodel.put("richieste", richieste);

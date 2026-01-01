@@ -67,9 +67,10 @@ public class ProdottoCandidatoController extends ApplicationBaseController {
         Integer idUtente = (Integer) session.getAttribute("userid");
         String keyProdotto = request.getParameter("idProdotto");
         String scelta = request.getParameter("azione");
+        String motivazione=request.getParameter("motivazione");
         int idProdotto = Integer.parseInt(keyProdotto);
         dl.getOrdineDAO().insertOrdine(idUtente, idProdotto);
-        dl.getProdottoCandidatoDAO().sceltaProdottoCandidato(idProdotto, scelta);
+        dl.getProdottoCandidatoDAO().sceltaProdottoCandidato(idProdotto, scelta,motivazione);
         dl.getRichiestaAcquistoDAO().updateRichiestabyProdotto(idProdotto,scelta);
         response.sendRedirect("utenteRegistrato");
     }
@@ -79,7 +80,8 @@ public class ProdottoCandidatoController extends ApplicationBaseController {
         String keyProdotto = request.getParameter("idProdotto");
         int idProdotto = Integer.parseInt(keyProdotto);
         String scelta = request.getParameter("azione");
-        dl.getProdottoCandidatoDAO().sceltaProdottoCandidato(idProdotto, scelta);
+        String motivazione=request.getParameter("motivazione");
+        dl.getProdottoCandidatoDAO().sceltaProdottoCandidato(idProdotto, scelta,motivazione);
         dl.getRichiestaAcquistoDAO().updateRichiestabyProdotto(idProdotto,scelta);
         response.sendRedirect("utenteRegistrato");
 

@@ -26,6 +26,9 @@ public interface PresaInCarico extends DataItem<Integer> {
     int getTecnicoKey();
     void setTecnicoKey(int tecnicoKey);
     
+    String getidProdotto();
+    void seIdProdotto(String x);
+    
     int getRichiestaKey();
     void setRichiestaKey(int richiestaKey);
     
@@ -48,6 +51,9 @@ public interface PresaInCarico extends DataItem<Integer> {
     // Metodi per le relazioni
     Tecnico getTecnico();
     void setTecnico(Tecnico tecnico);
+    
+    String getMotivazione();
+    void setMotivazione(String x);
     
     RichiestaAcquisto getRichiesta();
     void setRichiesta(RichiestaAcquisto richiesta);

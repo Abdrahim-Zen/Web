@@ -47,7 +47,7 @@ public class ProdottoCandidatoImpl extends DataItemImpl<Integer> implements Prod
     }
 
     @Override
-    public String getDescrizone() { 
+    public String getDescrizione() { 
         return descrizione; 
     }
 

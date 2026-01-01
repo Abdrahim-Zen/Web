@@ -22,7 +22,8 @@ public interface ProdottoCandidatoDAO {
     
     int insertProdottoCandidato(ProdottoCandidato prodotto) throws DataException;
     
-    void sceltaProdottoCandidato(int id,String scelta) throws DataException;
+    void sceltaProdottoCandidato(int id,String scelta,String motivazione) throws DataException;
     
+    void updateProdotti(String descrizione, double prezzo, String nome, int idProdotto) throws DataException;
     ProdottoCandidato createProdottoCandidato();
 }

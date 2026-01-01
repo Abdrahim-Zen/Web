@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
 
     private PreparedStatement sRichiesteInCaricoByTecnico;
+    private PreparedStatement sRichiesteInCaricoByTecnicoRifiutati;
     private PreparedStatement sPresaInCaricoByID;
     private PreparedStatement sPresaInCaricoByRichiestaID;
     private PreparedStatement iPresaInCarico;
@@ -50,6 +51,18 @@ public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
                     + "WHERE rc.ID_tecnico = ? AND rc.completato = FALSE "
                     + "ORDER BY rc.data_incarico DESC"
             );
+
+            sRichiesteInCaricoByTecnicoRifiutati = connection.prepareStatement("SELECT rc.ID, rc.data_incarico, rc.ID_tecnico, rc.ID_richiesta, p.stato, p.motivazione, p.ID as prodotto, "
+                    + "r.note, r.importo_totale, rc.completato, "
+                    + "u.nome as utenteNome, u.cognome as utenteCognome, "
+                    + "c.nome as categoriaNome "
+                    + "FROM richiesteInCarico rc "
+                    + "JOIN richiestaAcquisto r ON rc.ID_richiesta = r.ID "
+                    + "JOIN prodottoCandidato P ON rc.ID = p.ID_richiestaInCarico "
+                    + "JOIN utente u ON r.ID_utente = u.ID "
+                    + "JOIN categoria c ON r.ID_categoria = c.ID "
+                    + "WHERE rc.ID_tecnico = ? AND p.stato='rifiutato' "
+                    + "ORDER BY rc.data_incarico DESC");
 
             sPresaInCaricoByID = connection.prepareStatement(
                     "SELECT * FROM richiesteInCarico WHERE ID = ?"
@@ -99,6 +112,21 @@ public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
             }
 
         } catch (SQLException ex) {
+            throw new DataException("Errore nel recupero delle richieste in carico", ex);
+        }
+        return richieste;
+    }
+    @Override
+    public List<PresaInCarico> getRichiesteRifiutateByTecnico(int idTecnico) throws DataException{
+        List<PresaInCarico> richieste = new ArrayList<>();
+        try{
+            sRichiesteInCaricoByTecnicoRifiutati.setInt(1,idTecnico);
+            ResultSet rs = sRichiesteInCaricoByTecnicoRifiutati.executeQuery();
+            while (rs.next()) {
+                PresaInCarico presa = createPresaInCarico(rs);
+                richieste.add(presa);
+            }
+        }catch (SQLException ex) {
             throw new DataException("Errore nel recupero delle richieste in carico", ex);
         }
         return richieste;
@@ -220,7 +248,7 @@ public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
         presa.setCompletato(rs.getBoolean("completato"));
         presa.setTecnicoKey(rs.getInt("ID_tecnico"));
         presa.setRichiestaKey(rs.getInt("ID_richiesta"));
-
+        
         // Imposta i dati aggiuntivi se presenti (dalle JOIN)
         try {
             presa.setNoteRichiesta(rs.getString("note"));
@@ -228,6 +256,8 @@ public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
             presa.setUtenteNome(rs.getString("utenteNome"));
             presa.setUtenteCognome(rs.getString("utenteCognome"));
             presa.setCategoriaNome(rs.getString("categoriaNome"));
+            presa.setMotivazione(rs.getString("motivazione"));
+            presa.setIdProdotto(rs.getString("prodotto"));
         } catch (SQLException e) {
             // I campi aggiuntivi potrebbero non essere presenti in tutte le query
             // Ignora l'eccezione se si tratta di colonne non trovate

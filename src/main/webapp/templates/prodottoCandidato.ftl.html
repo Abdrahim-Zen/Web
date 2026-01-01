@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
--->
 <html>
     <head>
         <title>TODO supply a title</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
-              integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" 
-              crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    </head>
 
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+              rel="stylesheet"
+              integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+              crossorigin="anonymous">
+
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    </head>
 
     <body>
         <div class="container mt-4">
@@ -33,6 +32,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                             <th>Convalida</th>
                         </tr>
                     </thead>
+
                     <tbody class="table-group-divider">
                         <#list prodotti as r>
                         <tr>
@@ -41,12 +41,22 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                             <td>${r.descrizione!""}</td>
                             <td>${r.prezzo}</td>
                             <td>${r.dataProposta?string("dd/MM/yyyy")}</td>
-                            <td><form id="form" method="post" action="prodottoCandidato">
-                                    <input type="hidden" name="idProdotto" value="${r.key}"> <!-- Mi serve per ottenere la sceòta dell utente sul determinato prodotto -->
-                                    <button type="submit" name="azione" value="accetta" class="btn btn-success">
+
+                            <td>
+                                <form method="post" action="prodottoCandidato">
+                                    <input type="hidden" name="idProdotto" value="${r.key}">
+
+                                    <button type="submit"
+                                            name="azione"
+                                            value="accetta"
+                                            class="btn btn-success">
                                         <i class="bi bi-check-lg"></i>
                                     </button>
-                                    <button type="submit" name="azione" value="rifiuta" class="btn btn-danger">
+
+                                    <!-- RIFIUTA con modale -->
+                                    <button type="button"
+                                            class="btn btn-danger"
+                                            onclick="openRejectModal('${r.key}')">
                                         <i class="bi bi-x"></i>
                                     </button>
                                 </form>
@@ -54,13 +64,63 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                         </tr>
                         <#else>
                         <tr>
-                            <td colspan="5">Nessuna richiesta trovata</td>
+                            <td colspan="6">Nessuna richiesta trovata</td>
                         </tr>
                         </#list>
                     </tbody>
                 </table>
             </div>
         </div>
-    </body>
 
+        <!-- MODALE RIFIUTO -->
+        <div class="modal fade" id="rejectModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="post" action="prodottoCandidato">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Motivazione del rifiuto</h5>
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <input type="hidden" name="idProdotto" id="rejectProductId">
+                            <input type="hidden" name="azione" value="rifiuta">
+
+                            <div class="mb-3">
+                                <label class="form-label">Motivazione</label>
+                                <textarea name="motivazione"
+                                          class="form-control"
+                                          required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger">
+                                Conferma rifiuto
+                            </button>
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal">
+                                Annulla
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+            function openRejectModal(idProdotto) {
+                document.getElementById("rejectProductId").value = idProdotto;
+                const modal = new bootstrap.Modal(
+                    document.getElementById("rejectModal")
+                );
+                modal.show();
+            }
+        </script>
+    </body>
 </html>

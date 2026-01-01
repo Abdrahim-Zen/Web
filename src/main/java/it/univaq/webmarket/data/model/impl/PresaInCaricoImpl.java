@@ -25,6 +25,9 @@ public class PresaInCaricoImpl extends DataItemImpl<Integer> implements PresaInC
     private String utenteNome;
     private String utenteCognome;
     private String categoriaNome;
+    private String motivazione;
+    private String idProdotto;
+    
 
     // Relazioni
     private Tecnico tecnico;
@@ -212,5 +215,25 @@ public class PresaInCaricoImpl extends DataItemImpl<Integer> implements PresaInC
     @Override
     public void setCompletato(boolean completato) {
         this.completato = completato;
+    }
+
+    @Override
+    public String getMotivazione() {
+        return motivazione; 
+    }
+
+    @Override
+    public void setMotivazione(String x) {
+        this.motivazione=x;
+    }
+
+    @Override
+    public String getidProdotto() {
+        return idProdotto; 
+    }
+
+    @Override
+    public void seIdProdotto(String x) {
+        this.idProdotto=x; 
     }
 }

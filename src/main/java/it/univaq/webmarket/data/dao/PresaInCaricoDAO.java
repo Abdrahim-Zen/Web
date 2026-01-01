@@ -64,5 +64,7 @@ public interface PresaInCaricoDAO {
     
     public void segnaComeCompletato(int idRichiestaInCarico) throws DataException;
     
+     List<PresaInCarico> getRichiesteRifiutateByTecnico(int idTecnico) throws DataException;
+    
     
 }

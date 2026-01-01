@@ -15,7 +15,7 @@ public interface ProdottoCandidato extends DataItem<Integer>{
     String getNome();
     void setNome(String x);
     
-    String getDescrizone();
+    String getDescrizione();
     void setDescrizione(String x);
     
     Double getPrezzo();
