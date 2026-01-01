@@ -68,7 +68,6 @@ private void action_default(HttpServletRequest request, HttpServletResponse resp
         Map<String, Object> datamodel = new HashMap<>();
         HttpSession session = SecurityHelpers.checkSession(request);
         
-        // ... codice esistente per debug session ...
         
         String username = (String) session.getAttribute("username");
         Integer tecnicoId = (Integer) session.getAttribute("userid");
@@ -89,19 +88,16 @@ private void action_default(HttpServletRequest request, HttpServletResponse resp
         datamodel.put("userType", "tecnico");
         datamodel.put("username", username);
         
-        System.out.println("=== DEBUG: Tecnico ID: " + tecnicoId + " ===");
         
         List<PresaInCarico> richiesteInCarico = new ArrayList<>();
         
         if (tecnicoId != null) {
             WebMarketDataLayer dl = (WebMarketDataLayer) request.getAttribute("datalayer");
             if(dl != null) {
-                System.out.println("=== DEBUG: DataLayer trovato ===");
                 
                 try {
                     richiesteInCarico = dl.getPresaInCaricoDAO().getRichiesteInCaricoByTecnico(tecnicoId);
                     
-                    System.out.println("=== DEBUG: Numero richieste trovate: " + richiesteInCarico.size() + " ===");
                     
                     // PER OGNI RICHIESTA, RECUPERA LE SPECIFICHE
                     for (PresaInCarico richiesta : richiesteInCarico) {
@@ -109,11 +105,7 @@ private void action_default(HttpServletRequest request, HttpServletResponse resp
                             // Recupera le specifiche della richiesta usando il nuovo metodo
                             List<Map<String, String>> specifiche = 
                                 dl.getRichiestaAcquistoDAO().getSpecificheByRichiestaId(richiesta.getRichiestaKey());
-                            
-                            System.out.println("=== DEBUG Specifiche per richiesta " + richiesta.getRichiestaKey() + 
-                                             ": " + specifiche.size() + " ===");
-                            
-                            // Aggiungi le specifiche al datamodel
+                      
                             datamodel.put("specificheRichiesta_" + richiesta.getKey(), specifiche);
                             
                         } catch (Exception e) {
@@ -188,10 +180,6 @@ private void action_proponiProdotto(HttpServletRequest request, HttpServletRespo
         String prezzoProdottoStr = request.getParameter("prezzoProdotto");
         String idRichiestaInCaricoStr = request.getParameter("idRichiestaInCarico");
         
-        System.out.println("=== nomeProdotto: " + nomeProdotto + " ===");
-        System.out.println("=== descrizioneProdotto: " + descrizioneProdotto + " ===");
-        System.out.println("=== prezzoProdottoStr: " + prezzoProdottoStr + " ===");
-        System.out.println("=== idRichiestaInCaricoStr: " + idRichiestaInCaricoStr + " ===");
         
         // Validazione dei campi
         if (nomeProdotto == null || nomeProdotto.trim().isEmpty() ||
@@ -239,16 +227,13 @@ private void action_proponiProdotto(HttpServletRequest request, HttpServletRespo
         prodotto.setRichiestaKey(idRichiestaInCarico);
         prodotto.setDataProposta(new Timestamp(System.currentTimeMillis()));
         
-        // Inserisce il prodotto candidato nel database
-        System.out.println("=== PRIMA DI insertProdottoCandidato ===");
-        dl.getProdottoCandidatoDAO().insertProdottoCandidato(prodotto);
-        System.out.println("=== DOPO insertProdottoCandidato ===");
         
-        // SEGNA LA RICHIESTA COME COMPLETATA - così non apparirà più
-        System.out.println("=== SEGNATURA RICHIESTA COME COMPLETATA ===");
+        dl.getProdottoCandidatoDAO().insertProdottoCandidato(prodotto);
+       
+        
+        
         dl.getPresaInCaricoDAO().segnaComeCompletato(idRichiestaInCarico);
         
-        System.out.println("=== REINDIRIZZAMENTO A SUCCESS ===");
         response.sendRedirect("gestioneProdotti?success=1");
         
     } catch (NumberFormatException e) {

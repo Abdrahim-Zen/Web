@@ -3,87 +3,183 @@
     <head>
         <meta charset="UTF-8" />
         <title>Nuova Richiesta di Acquisto</title>
+        <#include "head.html">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" 
               crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-        <link rel="stylesheet" href="style/richiesta.css">
-    </head>
-    <body>
-        <div class="container mt-4">
-            <div class="contenitore">
-                <#include "header.ftl.html">
-            </div>
+        
+        <style>
+            /* 1. Sfondo del corpo completamente bianco (come da richiesta) */
+            body {
+                background-color: #FFFFFF;
+                color: #212529; /* Testo scuro */
+            }
+
+            /* 2. Specifiche nascoste di default */
+            .specifiche {
+                display: none; 
+            }
             
-            <#if error??>
-                    <div class="alert alert-danger" role="alert">
-                        Si è verificato un errore, ricompila il modulo.
-                    </div>
+            /* 3. Stile neutro e interattivo per il blocco categoria */
+            .category-card {
+                cursor: pointer;
+                border: 2px solid #e9ecef; /* Bordo leggero e neutro */
+                transition: all 0.2s ease;
+                background-color: #f8f9fa; /* Grigio chiarissimo per risalto */
+                text-align: center;
+                border-radius: 0.5rem;
+                padding: 1.5rem;
+            }
+            .category-card:hover {
+                border-color: #6c757d; /* Grigio scuro all'hover */
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            /* 4. Stile per la card selezionata (neutro: grigio scuro) */
+            .category-card.selected {
+                border-color: #343a40; 
+                background-color: #e9ecef; /* Grigio chiaro per evidenziare */
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+            }
+            
+            /* 5. Nasconde il radio button nativo */
+            .category-card input[type="radio"] {
+                display: none;
+            }
+        </style>
+    </head>
+    
+    <body>
+        
+       
+       
+
+        <div class="container my-5">
+            <#include "header.ftl.html">
+            <div class="row justify-content-center">
+                
+                <div class="col-lg-8">
+                    
+                    <h1 class="mb-4 text-dark border-bottom pb-2">Nuova Richiesta di Acquisto</h1>
+                    
+                    <#if error??>
+                        <div class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>Si è verificato un errore, ricompila il modulo.
+                        </div>
                     </#if>
                     
-            <form method="post" action="richiestaAcquisto">
-                <div class="contenitore">
-                    <h1>Nuova Richiesta di Acquisto</h1>
-                    <div class="categoria-box">
-                        <#list categorie as cat>
-                        <h2>Categoria: ${cat.nomeCategoria}</h2>
-                        <input type="radio" name="categoria" value="${cat.key}" 
-                               onclick="mostraSpecifiche('${cat.key}')" required /> 
-                        Seleziona questa categoria
-                        </#list>
-                    </div>
+                    <form method="post" action="richiestaAcquisto" class="p-5 rounded shadow-lg" style="background-color: #f8f9fa;">
 
+                        <section class="mb-5">
+                            <h2 class="h5 mb-3 text-secondary border-bottom pb-1"><i class="bi bi-tags-fill me-2"></i>Seleziona la Categoria</h2>
+                            
+                            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+                                <#list categorie as cat>
+                                    <div class="col">
+                                        <label class="category-card" for="cat-${cat.key}">
+                                            
+                                            <input type="radio" name="categoria" id="cat-${cat.key}" value="${cat.key}" 
+                                                onclick="handleCategorySelection(this)" required>
+                                            
+                                            <h3 class="h5 text-dark mt-2">${cat.nomeCategoria}</h3>
+                                        </label>
+                                    </div>
+                                </#list>
+                            </div>
+                        </section>
 
+                        <section class="mb-5">
+                            <#list categorie as cat>
+                                <div id="spec-${cat.key}" class="specifiche card border-secondary">
+                                    <div class="card-header bg-secondary text-white">
+                                        <h4 class="h5 mb-0"><i class="bi bi-gear-wide-connected me-2"></i>Dettagli richiesti per ${cat.nomeCategoria}</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <#assign specifiche = specificheMap[cat.key?string]>
+                                        <#if specifiche??>
+                                            <#list specifiche as spec>
+                                                <div class="mb-3">
+                                                    <label for="spec-input-${spec.key}" class="form-label fw-bold">${spec.nomeSpecifica}:</label>
+                                                    <input type="text" class="form-control" id="spec-input-${spec.key}"
+                                                        name="specifiche_${spec.key}" 
+                                                        /> 
+                                                </div>
+                                            </#list>
+                                        <#else>
+                                            <p class="text-muted">Nessuna specifica definita per questa categoria.</p>
+                                        </#if>
+                                    </div>
+                                </div>
+                            </#list>
+                        </section>
 
-                    <#list categorie as cat>
-                    <div id="spec-${
-                             cat.key
-                         }" class="specifiche">
-                        <h3>Specifiche della Categoria: ${cat.nomeCategoria}</h3>
-                        <#assign specifiche = specificheMap[cat.key?string]>
-                        <#if specifiche??>
-                        <#list specifiche as spec>
-                        <div class="specifica-input">
-                            <label>${spec.nomeSpecifica}:</label>
-                            <input type="text" 
-                                   name="specifiche_${spec.key}" 
-                                   placeholder="Inserisci valore desiderato" />
+                        <section class="mb-4 pt-3 border-top">
+                            <h2 class="h5 mb-3 text-secondary"><i class="bi bi-wallet-fill me-2"></i>Budget e Note</h2>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="importo" class="form-label fw-bold">Importo massimo richiesto (€):</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-currency-euro"></i></span>
+                                        <input type="number" step="0.01" min="0" name="importo" id="importo" class="form-control" placeholder="0.00" required 
+                                            oninput="checkNegative(this)" onchange="checkNegative(this)" />
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <div class="mb-4">
+                                <label for="note" class="form-label fw-bold">Note aggiuntive:</label>
+                                <textarea id="note" name="note" class="form-control" rows="4" 
+                                    placeholder="Scrivi qui eventuali dettagli, preferenze o informazioni utili..."></textarea>
+                            </div>
+                        </section>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-dark btn-lg shadow" name="richiestaAcquisto">
+                                <i class="bi bi-send-fill me-2"></i>Invia Richiesta
+                            </button>
                         </div>
-                        </#list>
-                        </#if>
-                    </div>
-                    </#list>
-
-
-
-                    <label for="importo">Importo massimo (€):</label>
-                    <input type="number" step="0.01" name="importo" id="importo" required style="width: 120px; height: 25px;" />
-
-
-                    <br/><br/>
-                    <label for="note">Note aggiuntive:</label><br/>
-                    <textarea id="note" name="note" placeholder="Scrivi qui eventuali dettagli, preferenze o informazioni utili..."></textarea>
-
-                    <br/><br/>
-                    <button type="submit" class="task" name="richiestaAcquisto">
-                        <p>Invia richiesta</p>
-                    </button>
-            </form>
+                        
+                    </form>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <script>
-        function mostraSpecifiche(catKey) {
-            // Nascondo tutte le specifiche
-            document.querySelectorAll('.specifiche').forEach(div => {
-                div.style.display = 'none';
-            });
-            // Mostro solo quelle della categoria scelta
-            const specDiv = document.getElementById('spec-' + catKey);
-            if (specDiv) {
-                specDiv.style.display = 'block';
+        <script>
+            // Funzione per la gestione delle specifiche (invariata)
+            function mostraSpecifiche(catKey) {
+                document.querySelectorAll('.specifiche').forEach(div => {
+                    div.style.display = 'none';
+                });
+                const specDiv = document.getElementById('spec-' + catKey);
+                if (specDiv) {
+                    specDiv.style.display = 'block';
+                }
             }
-        }
-    </script>
-</body>
+
+            // Funzione per la gestione della selezione categoria (invariata)
+            function handleCategorySelection(radioElement) {
+                const catKey = radioElement.value;
+                document.querySelectorAll('.category-card').forEach(label => {
+                    label.classList.remove('selected');
+                });
+                radioElement.closest('.category-card').classList.add('selected');
+                mostraSpecifiche(catKey);
+            }
+            
+            // NUOVA FUNZIONE: Blocca l'inserimento o la modifica a un valore negativo
+            function checkNegative(input) {
+                // Converte il valore in numero e controlla se è minore di zero
+                if (parseFloat(input.value) < 0) {
+                    // Se è negativo, imposta il valore a 0
+                    input.value = 0;
+                }
+            }
+        </script>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+                crossorigin="anonymous"></script>
+    </body>
 </html>

@@ -46,6 +46,8 @@ public class StatoRichiesteController extends ApplicationBaseController {
 
         List<RichiestaAcquisto> richieste = dl.getRichiestaAcquistoDAO().getRichiesteByUtenteId(idUtente);
         Map<String, Object> datamodel = new HashMap<>();
+        String type = (String) session.getAttribute("userType");
+        datamodel.put("userType", type);
         datamodel.put("richieste", richieste);
         datamodel.put("username", username);
         TemplateResult result = new TemplateResult(getServletContext());

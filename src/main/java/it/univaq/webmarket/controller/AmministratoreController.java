@@ -56,6 +56,7 @@ public class AmministratoreController extends ApplicationBaseController {
         HttpSession session = SecurityHelpers.checkSession(request);
         String username = (String) session.getAttribute("username");
         String type = (String) session.getAttribute("userType");
+        request.setAttribute("error", request.getParameter("error"));
         datamodel.put("userType", type);
         datamodel.put("username", username);
         result.activate("amministratore.ftl.html", datamodel, request, response);

@@ -76,23 +76,6 @@ public class LoginController extends ApplicationBaseController {
         else{
              response.sendRedirect("login?error=2");
         }
-        /*         
-        if (utente == null||!SecurityHelpers.checkPasswordHashPBKDF2(password, utente.getPassword())) {
-            Tecnico tecnico = dl.getTecnicoDAO().getTecnicoByName(email, password);
-            if (tecnico == null||!SecurityHelpers.checkPasswordHashPBKDF2(password, tecnico.getPassword())) {
-                
-                
-                response.sendRedirect("login?error=2");
-                return;
-            }
-
-            SecurityHelpers.createSession(request, tecnico.getNome(), tecnico.getKey());
-            response.sendRedirect("tecnico");
-        } else {
-
-            SecurityHelpers.createSession(request, utente.getNome(), utente.getKey());
-            response.sendRedirect("utenteRegistrato");
-        }*/
 
     }
 }

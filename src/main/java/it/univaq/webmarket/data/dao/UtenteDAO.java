@@ -6,6 +6,7 @@ package it.univaq.webmarket.data.dao;
 
 import it.univaq.webmarket.data.model.Utente;
 import it.univaq.webmarket.framework.data.DataException;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
 public interface UtenteDAO {
     Utente getUtente(int id) throws DataException;
     List<Utente> getUtentiCreatiDa(int idAmministratore) throws DataException;
-    void addUtente(String email,String nome,String cognome,String password,Integer idAdmin);
+    void addUtente(String email,String nome,String cognome,String password,Integer idAdmin)throws SQLException;
     Utente getUtentebyEmail(String n) throws DataException;
  
 }

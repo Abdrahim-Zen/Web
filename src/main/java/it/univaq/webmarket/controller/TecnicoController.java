@@ -55,7 +55,6 @@ public class TecnicoController extends ApplicationBaseController {
         datamodel.put("username", username);
         String type = (String) session.getAttribute("userType");
         datamodel.put("userType", type);
-        datamodel.put("userType", type);
         result.activate("tecnico.ftl.html", datamodel, request, response);
     }
 

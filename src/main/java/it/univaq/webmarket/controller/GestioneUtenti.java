@@ -42,7 +42,7 @@ public class GestioneUtenti extends ApplicationBaseController {
             response.sendRedirect("login?error=3");
             return;
         }
-        
+
         String tipoUtente = request.getParameter("tipoUtente");
         if ("tecnico".equals(tipoUtente)) {
             aggiungiTecnico(request, response);
@@ -66,7 +66,7 @@ public class GestioneUtenti extends ApplicationBaseController {
 
     }
 
-    private void aggiungiUtente(HttpServletRequest request, HttpServletResponse response) throws NoSuchAlgorithmException, InvalidKeySpecException, DataException, SQLException {
+    private void aggiungiUtente(HttpServletRequest request, HttpServletResponse response) throws NoSuchAlgorithmException, InvalidKeySpecException, DataException, SQLException, IOException {
         String nome = request.getParameter("nome");
         String email = request.getParameter("email");
         String cognome = request.getParameter("cognome");
@@ -74,13 +74,18 @@ public class GestioneUtenti extends ApplicationBaseController {
         HttpSession session = SecurityHelpers.checkSession(request);
         int idAdmin = (int) session.getAttribute("userid");
         WebMarketDataLayer dl = (WebMarketDataLayer) request.getAttribute("datalayer");
-        dl.getUtenteDAO().addUtente(email, nome, cognome, password, idAdmin);
-        Utente u = dl.getUtenteDAO().getUtentebyEmail(email);
-        dl.getUtenteRegistratoDAO().addUtentebyAdmin(u.getKey());
+        try {
+            dl.getUtenteDAO().addUtente(email, nome, cognome, password, idAdmin);
+
+            Utente u = dl.getUtenteDAO().getUtentebyEmail(email);
+            dl.getUtenteRegistratoDAO().addUtentebyAdmin(u.getKey());
+        } catch (SQLException e) {
+            response.sendRedirect("amministratore?error=1");
+        }
 
     }
 
-    private void aggiungiTecnico(HttpServletRequest request, HttpServletResponse response) throws NoSuchAlgorithmException, DataException, InvalidKeySpecException, ServletException, SQLException {
+    private void aggiungiTecnico(HttpServletRequest request, HttpServletResponse response) throws NoSuchAlgorithmException, DataException, InvalidKeySpecException, ServletException, SQLException, IOException {
         String nome = request.getParameter("nome");
         String email = request.getParameter("email");
         String cognome = request.getParameter("cognome");
@@ -96,9 +101,14 @@ public class GestioneUtenti extends ApplicationBaseController {
         HttpSession session = SecurityHelpers.checkSession(request);
         int idAdmin = (int) session.getAttribute("userid");
         WebMarketDataLayer dl = (WebMarketDataLayer) request.getAttribute("datalayer");
-        dl.getUtenteDAO().addUtente(email, nome, cognome, password, idAdmin);
-        Utente u = dl.getUtenteDAO().getUtentebyEmail(email);
-        dl.getTecnicoDAO().addTecnicobyAdmin(u.getKey(),dataAssunzione);
+        try {
+            dl.getUtenteDAO().addUtente(email, nome, cognome, password, idAdmin);
+
+            Utente u = dl.getUtenteDAO().getUtentebyEmail(email);
+            dl.getTecnicoDAO().addTecnicobyAdmin(u.getKey(), dataAssunzione);
+        } catch (SQLException e) {
+            response.sendRedirect("amministratore?error=1");
+        }
 
     }
 
@@ -106,20 +116,19 @@ public class GestioneUtenti extends ApplicationBaseController {
         WebMarketDataLayer dl = (WebMarketDataLayer) request.getAttribute("datalayer");
         HttpSession session = SecurityHelpers.checkSession(request);
         String type = (String) session.getAttribute("userType");
-        String username=(String) session.getAttribute("username");
+        String username = (String) session.getAttribute("username");
         Integer idAmministratore = (Integer) session.getAttribute("userid");
         List<UtenteRegistrato> utenti = dl.getUtenteRegistratoDAO().getUtentiRegistratiCreatiDa(idAmministratore);
         List<Tecnico> tecnici = dl.getTecnicoDAO().getTecnicoCreatiDa(idAmministratore);
         Map<String, Object> datamodel = new HashMap<>();
-        
+
         datamodel.put("utenti", utenti);
         datamodel.put("tecnici", tecnici);
         datamodel.put("userType", type);
         datamodel.put("username", username);
-        
+
         TemplateResult result = new TemplateResult(getServletContext());
-        
- 
+
         result.activate("gestioneUtenti.ftl.html", datamodel, request, response);
     }
 

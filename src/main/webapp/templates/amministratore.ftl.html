@@ -15,7 +15,9 @@
             <#include "header.ftl.html">
             <form id="form" method="get"  action="amministratore">
                 
-                    
+                        <#if error?? && error == "1">
+                    <p style="color:red; text-align:center;">Nome utente o password non validi.</p>
+                    </#if>
                         <div class="row justify-content-center">
                             <div class="col-3">
                                 <button type="submit" class="task" name="azione" value="gestione utenti" >

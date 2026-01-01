@@ -7,6 +7,7 @@ package it.univaq.webmarket.controller;
 import it.univaq.webmarket.application.ApplicationBaseController;
 import it.univaq.webmarket.data.dao.impl.WebMarketDataLayer;
 import it.univaq.webmarket.data.model.ProdottoCandidato;
+import it.univaq.webmarket.framework.data.DataException;
 import it.univaq.webmarket.framework.security.SecurityHelpers;
 import it.univaq.webmarket.framework.view.TemplateManagerException;
 import it.univaq.webmarket.framework.view.TemplateResult;
@@ -17,6 +18,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +36,9 @@ public class ProdottoCandidatoController extends ApplicationBaseController {
 
     @Override
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, TemplateManagerException {
+            throws ServletException, IOException, TemplateManagerException, DataException, SQLException {
         HttpSession session = SecurityHelpers.checkSession(request);
-        if(session==null){
+        if (session == null) {
             response.sendRedirect("login?error=3");
             return;
         }
@@ -44,24 +46,42 @@ public class ProdottoCandidatoController extends ApplicationBaseController {
         if ("accetta".equals(azione)) {
             accettazione(request, response);
         } else if ("rifiuta".equals(azione)) {
-           rifiutato(request,response);
+            rifiutato(request, response);
         }
         WebMarketDataLayer dl = (WebMarketDataLayer) request.getAttribute("datalayer");
-        
+
         Integer idUtente = (Integer) session.getAttribute("userid");
         List<ProdottoCandidato> prodotti = dl.getProdottoCandidatoDAO().getProdottiCandidatiByUserID(idUtente);
         Map<String, Object> datamodel = new HashMap<>();
+        String type = (String) session.getAttribute("userType");
+        datamodel.put("userType", type);
         datamodel.put("prodotti", prodotti);
         TemplateResult result = new TemplateResult(getServletContext());
         result.activate("prodottoCandidato.ftl.html", datamodel, request, response);
 
     }
 
-    private void accettazione(HttpServletRequest request, HttpServletResponse response) {
-       
+    private void accettazione(HttpServletRequest request, HttpServletResponse response) throws DataException, IOException, SQLException {
+        WebMarketDataLayer dl = (WebMarketDataLayer) request.getAttribute("datalayer");
+        HttpSession session = SecurityHelpers.checkSession(request);
+        Integer idUtente = (Integer) session.getAttribute("userid");
+        String keyProdotto = request.getParameter("idProdotto");
+        String scelta = request.getParameter("azione");
+        int idProdotto = Integer.parseInt(keyProdotto);
+        dl.getOrdineDAO().insertOrdine(idUtente, idProdotto);
+        dl.getProdottoCandidatoDAO().sceltaProdottoCandidato(idProdotto, scelta);
+        dl.getRichiestaAcquistoDAO().updateRichiestabyProdotto(idProdotto,scelta);
+        response.sendRedirect("utenteRegistrato");
     }
 
-    private void rifiutato(HttpServletRequest request, HttpServletResponse response) {
-      
+    private void rifiutato(HttpServletRequest request, HttpServletResponse response) throws DataException, IOException, SQLException {
+        WebMarketDataLayer dl = (WebMarketDataLayer) request.getAttribute("datalayer");
+        String keyProdotto = request.getParameter("idProdotto");
+        int idProdotto = Integer.parseInt(keyProdotto);
+        String scelta = request.getParameter("azione");
+        dl.getProdottoCandidatoDAO().sceltaProdottoCandidato(idProdotto, scelta);
+        dl.getRichiestaAcquistoDAO().updateRichiestabyProdotto(idProdotto,scelta);
+        response.sendRedirect("utenteRegistrato");
+
     }
 }

@@ -81,7 +81,7 @@ public class OrdineDAO_MySQL extends DAO implements OrdineDAO {
 
             // INSERT per aggiungere un nuovo ordine
             iOrdine = connection.prepareStatement(
-                "INSERT INTO ordine (stato, motivazione_rifiuto, ID_utente, ID_prodotto_candidato) VALUES (?, ?, ?, ?)",
+                "INSERT INTO ordine (ID_utente, ID_prodotto_candidato) VALUES (?, ?)",
                 Statement.RETURN_GENERATED_KEYS
             );
 
@@ -178,12 +178,11 @@ public class OrdineDAO_MySQL extends DAO implements OrdineDAO {
     }
 
     @Override
-    public int insertOrdine(String stato, String motivazione, int idUtente, int idProdottoCandidato) throws DataException {
+    public int insertOrdine(int idUtente, int idProdottoCandidato) throws DataException {
         try {
-            iOrdine.setString(1, stato);
-            iOrdine.setString(2, motivazione);
-            iOrdine.setInt(3, idUtente);
-            iOrdine.setInt(4, idProdottoCandidato);
+           
+            iOrdine.setInt(1, idUtente);
+            iOrdine.setInt(2, idProdottoCandidato);
             
             int affectedRows = iOrdine.executeUpdate();
             if (affectedRows == 0) {

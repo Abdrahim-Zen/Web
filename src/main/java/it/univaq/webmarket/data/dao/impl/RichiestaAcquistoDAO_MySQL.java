@@ -34,6 +34,8 @@ public class RichiestaAcquistoDAO_MySQL extends DAO implements RichiestaAcquisto
     PreparedStatement uRichiesta;
     PreparedStatement sRichiestaByUtente;
     PreparedStatement sRichiestaById;
+    PreparedStatement uRichiestaByProdottoCandidatoAcc;
+    PreparedStatement uRichiestaByProdottoCandidatoRif;
     PreparedStatement sRichiestaNonPreseInCarico;
     PreparedStatement sSpecificheByRichiestaId;
     PreparedStatement sRichiesteNonAssociateConSpecifiche;
@@ -55,7 +57,10 @@ public class RichiestaAcquistoDAO_MySQL extends DAO implements RichiestaAcquisto
             sRichiestaById = connection.prepareStatement("SELECT * FROM richiestaAcquisto r JOIN categoria c ON r.ID_categoria = c.ID WHERE r.ID=? ");
             sRichiestaNonPreseInCarico = connection.prepareStatement(" SELECT * FROM  richiestaAcquisto WHERE stato = 'in_attesa' ");
             
-                        // Aggiungi queste nuove prepared statements
+            uRichiestaByProdottoCandidatoAcc=connection.prepareStatement("UPDATE  richiestaAcquisto ra JOIN richiesteInCarico ric ON ra.ID = ric.ID_richiesta "+
+                    "JOIN prodottoCandidato pc ON ric.ID = pc.ID_richiestaInCarico SET ra.stato = 'approvata' WHERE pc.ID = ?");
+            uRichiestaByProdottoCandidatoRif=connection.prepareStatement("UPDATE  richiestaAcquisto ra JOIN richiesteInCarico ric ON ra.ID = ric.ID_richiesta "+
+                    "JOIN prodottoCandidato pc ON ric.ID = pc.ID_richiestaInCarico SET ra.stato = 'rifiutata' WHERE pc.ID = ?");
             sSpecificheByRichiestaId = connection.prepareStatement(
                 "SELECT sr.ID, sr.valore, sc.nome_specifica " +
                 "FROM specifiche_richiesta sr " +
@@ -202,7 +207,19 @@ public class RichiestaAcquistoDAO_MySQL extends DAO implements RichiestaAcquisto
             throw new DataException("Errore nell'aggiornamento della richiesta acquisto", ex);
         }
     }
-
+    @Override
+    public void updateRichiestabyProdotto(int idProdotto,String scelta) throws SQLException{
+        
+        if(scelta.equals("accetta")){
+            uRichiestaByProdottoCandidatoAcc.setInt(1, idProdotto);
+        uRichiestaByProdottoCandidatoAcc.executeUpdate();
+        }
+        else{
+            uRichiestaByProdottoCandidatoRif.setInt(1, idProdotto);
+        uRichiestaByProdottoCandidatoRif.executeUpdate();
+        }
+        
+                }
     @Override
     public RichiestaAcquisto getRichiestaAcquistoByID(int id) throws DataException {
         RichiestaAcquisto richiesta = null;

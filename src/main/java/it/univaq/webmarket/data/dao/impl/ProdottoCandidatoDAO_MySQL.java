@@ -27,9 +27,12 @@ public class ProdottoCandidatoDAO_MySQL extends DAO implements ProdottoCandidato
 
     PreparedStatement sProdottoByUtente;
     PreparedStatement sProdottoByID;
-    PreparedStatement sProdottoByRichiestaInCarico; // CORRETTO: per ID_richiestaInCarico
+    PreparedStatement sProdottoByRichiestaInCarico;
     PreparedStatement iProdottoCandidato;
-    
+  
+    PreparedStatement uProdottoCandidatoAcc;
+    PreparedStatement uProdottoCandidatoRif;
+
     public ProdottoCandidatoDAO_MySQL(DataLayer d) {
         super(d);
     }
@@ -38,25 +41,29 @@ public class ProdottoCandidatoDAO_MySQL extends DAO implements ProdottoCandidato
     public void init() throws DataException {
         super.init();
         try {
-            // CORREZIONE: prodottoCandidato ha ID_richiestaInCarico, non ID_tecnico e ID_richiesta
+            
             sProdottoByUtente = connection.prepareStatement("SELECT p.ID, p.nome, p.descrizione, p.prezzo, "
-                    + "p.ID_richiestaInCarico, p.data_proposta " // RIMOSSO: ID_tecnico
+                    + "p.ID_richiestaInCarico, p.data_proposta "
                     + "FROM prodottoCandidato p " + "JOIN richiesteInCarico rc ON p.ID_richiestaInCarico = rc.ID "
                     + "JOIN richiestaAcquisto r ON rc.ID_richiesta = r.ID "
-                    + "WHERE r.ID_utente = ? ");
-            
+                    + "WHERE r.ID_utente = ? AND p.stato = 'in_attesa' ");
+
             sProdottoByID = connection.prepareStatement("SELECT * FROM prodottoCandidato WHERE ID=? ");
-            
-            // CORREZIONE: cerca per ID_richiestaInCarico
+
+           
             sProdottoByRichiestaInCarico = connection.prepareStatement("SELECT * FROM prodottoCandidato WHERE ID_richiestaInCarico = ? ORDER BY data_proposta DESC");
-            
-            // CORREZIONE: inserisce con ID_richiestaInCarico, rimuovi ID_tecnico
+
+           
             iProdottoCandidato = connection.prepareStatement(
-                "INSERT INTO prodottoCandidato (nome, descrizione, prezzo, ID_richiestaInCarico, data_proposta) " +
-                "VALUES (?, ?, ?, ?, ?)", 
-                Statement.RETURN_GENERATED_KEYS
+                    "INSERT INTO prodottoCandidato (nome, descrizione, prezzo, ID_richiestaInCarico, data_proposta) "
+                    + "VALUES (?, ?, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS
             );
             
+           
+            uProdottoCandidatoAcc = connection.prepareStatement("UPDATE prodottoCandidato SET stato = 'accettato' WHERE ID = ?");
+            uProdottoCandidatoRif = connection.prepareStatement("UPDATE prodottoCandidato SET stato = 'rifiutato' WHERE ID = ?");
+
         } catch (SQLException ex) {
             Logger.getLogger(ProdottoCandidatoDAO_MySQL.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -64,11 +71,11 @@ public class ProdottoCandidatoDAO_MySQL extends DAO implements ProdottoCandidato
 
     @Override
     public List<ProdottoCandidato> getProdottiCandidatiByUserID(int x) {
-        List<ProdottoCandidato> prodottiCandidati = new ArrayList<> ();
+        List<ProdottoCandidato> prodottiCandidati = new ArrayList<>();
         try {
             sProdottoByUtente.setInt(1, x);
             ResultSet rs = sProdottoByUtente.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 prodottiCandidati.add(createProdottoCandidato(rs));
             }
         } catch (SQLException ex) {
@@ -83,7 +90,7 @@ public class ProdottoCandidatoDAO_MySQL extends DAO implements ProdottoCandidato
         try {
             sProdottoByRichiestaInCarico.setInt(1, richiestaInCaricoId);
             ResultSet rs = sProdottoByRichiestaInCarico.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 prodottiCandidati.add(createProdottoCandidato(rs));
             }
         } catch (SQLException ex) {
@@ -96,12 +103,12 @@ public class ProdottoCandidatoDAO_MySQL extends DAO implements ProdottoCandidato
     public ProdottoCandidato getProdottoCandidatoByID(int x) throws DataException {
         ProdottoCandidato prodotto = null;
         try {
-            if(dataLayer.getCache().has(ProdottoCandidato.class, x)){
+            if (dataLayer.getCache().has(ProdottoCandidato.class, x)) {
                 prodotto = dataLayer.getCache().get(ProdottoCandidato.class, x);
             } else {
                 sProdottoByID.setInt(1, x);
                 ResultSet rs = sProdottoByID.executeQuery();
-                if(rs.next()){
+                if (rs.next()) {
                     prodotto = createProdottoCandidato(rs);
                     dataLayer.getCache().add(ProdottoCandidato.class, prodotto);
                 }
@@ -120,13 +127,14 @@ public class ProdottoCandidatoDAO_MySQL extends DAO implements ProdottoCandidato
             iProdottoCandidato.setDouble(3, prodotto.getPrezzo());
             iProdottoCandidato.setInt(4, prodotto.getRichiestaKey()); // CORREZIONE: ora è ID_richiestaInCarico
             iProdottoCandidato.setTimestamp(5, prodotto.getDataProposta());
-            
+           
             int affectedRows = iProdottoCandidato.executeUpdate();
+            
             if (affectedRows == 0) {
                 throw new DataException("Inserimento fallito, nessuna riga interessata");
             }
-            
-            try (ResultSet generatedKeys = iProdottoCandidato.getGeneratedKeys()) {
+
+            try ( ResultSet generatedKeys = iProdottoCandidato.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     int generatedId = generatedKeys.getInt(1);
                     prodotto.setKey(generatedId);
@@ -152,19 +160,42 @@ public class ProdottoCandidatoDAO_MySQL extends DAO implements ProdottoCandidato
         // RIMOSSO: prodotto.setTecnicoKey(rs.getInt("ID_tecnico")); - non esiste più
         return prodotto;
     }
-    
+
     @Override
-    public ProdottoCandidato createProdottoCandidato(){
+    public ProdottoCandidato createProdottoCandidato() {
         return new ProdottoCandidatoProxy(dataLayer);
+    }
+
+    public void sceltaProdottoCandidato(int id, String scelta) throws DataException {
+        try {
+            if (scelta.equals("accetta")) {
+                uProdottoCandidatoAcc.setInt(1, id);
+                uProdottoCandidatoAcc.executeUpdate();
+            } else {
+                uProdottoCandidatoRif.setInt(1, id);
+                uProdottoCandidatoRif.executeUpdate();
+            }
+
+        } catch (SQLException ex) {
+            throw new DataException("Errore durante l'eliminazione dell'ordine", ex);
+        }
     }
 
     @Override
     public void destroy() throws DataException {
         try {
-            if (sProdottoByUtente != null) sProdottoByUtente.close();
-            if (sProdottoByID != null) sProdottoByID.close();
-            if (sProdottoByRichiestaInCarico != null) sProdottoByRichiestaInCarico.close();
-            if (iProdottoCandidato != null) iProdottoCandidato.close();
+            if (sProdottoByUtente != null) {
+                sProdottoByUtente.close();
+            }
+            if (sProdottoByID != null) {
+                sProdottoByID.close();
+            }
+            if (sProdottoByRichiestaInCarico != null) {
+                sProdottoByRichiestaInCarico.close();
+            }
+            if (iProdottoCandidato != null) {
+                iProdottoCandidato.close();
+            }
         } catch (SQLException ex) {
             throw new DataException("Errore nella chiusura delle prepared statements", ex);
         }

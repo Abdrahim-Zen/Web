@@ -31,4 +31,6 @@ RichiestaAcquisto getRichiestaAcquistoByID(int id) throws DataException;
 void updateRichiestaAcquisto(RichiestaAcquisto richiesta) throws DataException;
 
 public List<Map<String, String>> getSpecificheByRichiestaId(int idRichiesta) throws DataException;
+
+public void updateRichiestabyProdotto(int idProdotto,String scelta) throws SQLException;
 }

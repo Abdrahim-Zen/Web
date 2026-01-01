@@ -40,7 +40,7 @@ public class RichiestaAcquistoController extends ApplicationBaseController {
     @Override
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = SecurityHelpers.checkSession(request);
-        if(session==null){
+        if (session == null) {
             response.sendRedirect("login?error=3");
             return;
         }
@@ -60,6 +60,10 @@ public class RichiestaAcquistoController extends ApplicationBaseController {
         }
 
         Map<String, Object> datamodel = new HashMap<>();
+        String type = (String) session.getAttribute("userType");
+        String username = (String) session.getAttribute("username");
+        datamodel.put("userType", type);
+        datamodel.put("username", username);
         datamodel.put("categorie", categorie);
         datamodel.put("specificheMap", mappaSpecifiche);
         TemplateResult result = new TemplateResult(getServletContext());
@@ -69,46 +73,44 @@ public class RichiestaAcquistoController extends ApplicationBaseController {
 
     private void invioRichiesta(HttpServletRequest request, HttpServletResponse response) throws DataException, IOException, TemplateManagerException {
         try {
-            
-        
-        WebMarketDataLayer dl = (WebMarketDataLayer) request.getAttribute("datalayer");
 
-        HttpSession session = SecurityHelpers.checkSession(request);
-        Integer idUtente = (Integer) session.getAttribute("userid");
+            WebMarketDataLayer dl = (WebMarketDataLayer) request.getAttribute("datalayer");
 
-        String note = request.getParameter("note");
-        Double importo = Double.valueOf(request.getParameter("importo"));
-        Integer categoriaId = Integer.valueOf(request.getParameter("categoria"));
-        Categoria r = dl.getCategoriaDAO().getCategoriabyID(categoriaId);
-        UtenteRegistrato t = dl.getUtenteRegistratoDAO().getUtente(idUtente);
-        RichiestaAcquisto x = dl.getRichiestaAcquistoDAO().createRichiesta();
-        x.setUtenteRegistrato(t);
-        x.setCategorai(r);
-        x.setImporto(importo);
-        x.setDataInserimento(new java.sql.Timestamp(System.currentTimeMillis()));
-        x.setNote(note);
-        dl.getRichiestaAcquistoDAO().storeRichiestaAcquisto(x);
+            HttpSession session = SecurityHelpers.checkSession(request);
+            Integer idUtente = (Integer) session.getAttribute("userid");
 
-        List<SpecificaCategoria> specifiche = dl.getSpecificaCategoriaDAO().getListSpecificaCategoria(r.getKey());
-        for (SpecificaCategoria spec : specifiche) {
-            String valoreInput = request.getParameter("specifiche_" + spec.getKey());
+            String note = request.getParameter("note");
+            Double importo = Double.valueOf(request.getParameter("importo"));
+            Integer categoriaId = Integer.valueOf(request.getParameter("categoria"));
+            Categoria r = dl.getCategoriaDAO().getCategoriabyID(categoriaId);
+            UtenteRegistrato t = dl.getUtenteRegistratoDAO().getUtente(idUtente);
+            RichiestaAcquisto x = dl.getRichiestaAcquistoDAO().createRichiesta();
+            x.setUtenteRegistrato(t);
+            x.setCategorai(r);
+            x.setImporto(importo);
+            x.setDataInserimento(new java.sql.Timestamp(System.currentTimeMillis()));
+            x.setNote(note);
+            dl.getRichiestaAcquistoDAO().storeRichiestaAcquisto(x);
 
-            if (valoreInput != null && !valoreInput.trim().isEmpty()) {
-                ValoreSpecificaRichiesta valore = dl.getValoreSpecificaRichiestaDAO().creaValoreRichiesta();
-                valore.setRichiestaAcquisto(x);
-                valore.setSpecificaCategoria(spec);
-                valore.setValore(valoreInput);
+            List<SpecificaCategoria> specifiche = dl.getSpecificaCategoriaDAO().getListSpecificaCategoria(r.getKey());
+            for (SpecificaCategoria spec : specifiche) {
+                String valoreInput = request.getParameter("specifiche_" + spec.getKey());
 
-                dl.getValoreSpecificaRichiestaDAO().storeValoreSpecificaRichiesta(valore);
+                if (valoreInput != null && !valoreInput.trim().isEmpty()) {
+                    ValoreSpecificaRichiesta valore = dl.getValoreSpecificaRichiestaDAO().creaValoreRichiesta();
+                    valore.setRichiestaAcquisto(x);
+                    valore.setSpecificaCategoria(spec);
+                    valore.setValore(valoreInput);
+
+                    dl.getValoreSpecificaRichiestaDAO().storeValoreSpecificaRichiesta(valore);
+                }
             }
-        }
 
-        response.sendRedirect("utenteRegistrato");}
-        catch (Exception e) {
-        
-        response.sendRedirect("richiestaAcquisto?error");
-        
-            
+            response.sendRedirect("utenteRegistrato");
+        } catch (Exception e) {
+
+            response.sendRedirect("richiestaAcquisto?error");
+
         }
 
     }

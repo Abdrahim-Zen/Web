@@ -23,7 +23,7 @@ public interface OrdineDAO {
     
     List<Ordine> getOrdiniByUtente(int idUtente) throws DataException;
     
-    int insertOrdine(String stato, String motivazione, int idUtente, int idProdottoCandidato) throws DataException;
+    int insertOrdine(int idUtente, int idProdottoCandidato) throws DataException;
     
     void updateStatoOrdine(int idOrdine, String stato) throws DataException;
     

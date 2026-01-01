@@ -147,17 +147,15 @@ public class UtenteDAO_MySQL extends DAO implements UtenteDAO{
     
 
     @Override 
-    public void addUtente(String email, String nome, String cognome, String password, Integer idAdmin) {
-        try {
+    public void addUtente(String email, String nome, String cognome, String password, Integer idAdmin) throws SQLException {
+        
             iUser.setString(1, email);
             iUser.setString(2, nome);
             iUser.setString(3, cognome);
             iUser.setString(4, password);
             iUser.setInt(5, idAdmin);
             iUser.executeUpdate();
-        } catch (SQLException ex) {
-            Logger.getLogger(UtenteDAO_MySQL.class.getName()).log(Level.SEVERE, null, ex);
-        }
+      
        
     }
 

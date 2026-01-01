@@ -39,16 +39,16 @@
     <body>
         <div class="container mt-4">
             <#include "header.ftl.html">
-            
+
             <h1>Utenti Associati</h1>
-            
+
             <table>
                 <thead>
                     <tr>
                         <th>Email</th>
                         <th>Nome</th>
                         <th>Cognome</th>
-                       
+
                         <th>Modifica</th>
                     </tr>
                 </thead>
@@ -58,9 +58,9 @@
                         <td>${u.email}</td>
                         <td>${u.nome}</td>
                         <td>${u.cognome}</td>
-                        
+
                         <td>
-                            <form action="gestioneUtenti" method="post" style="display: inline;">
+                            <form action="gestioneUtenti" method="post" style="display: inline;" class="delete-form" onsubmit="return confermaEliminazione(event);">
                                 <input type="hidden" name="emailUtente" value="${u.email}">
                                 <button type="submit" class="btn btn-danger btn-sm" name="azione" value="elimina">
                                     Elimina
@@ -71,16 +71,16 @@
                     </#list>
                 </tbody>
             </table>
-            
+
             <h1>Tecnici Associati</h1>
-            
+
             <table>
                 <thead>
                     <tr>
                         <th>Email</th>
                         <th>Nome</th>
                         <th>Cognome</th>
-                       
+
                         <th>Modifica</th>
                     </tr>
                 </thead>
@@ -90,14 +90,14 @@
                         <td>${t.email}</td>
                         <td>${t.nome}</td>
                         <td>${t.cognome}</td>
-                        
+
                         <td>
-                            <form action="gestioneUtenti" method="post" style="display: inline;">
-                                <input type="hidden" name="emailUtente" value="${t.email}">
-                                <button type="submit" class="btn btn-danger btn-sm" name="azione" value="elimina">
-                                    Elimina
-                                </button>
-                            </form>
+                            <form action="gestioneUtenti" method="post" style="display: inline;" class="delete-form" onsubmit="return confermaEliminazione(event);">
+            <input type="hidden" name="emailUtente" value="${t.email}">
+            <button type="submit" class="btn btn-danger btn-sm" name="azione" value="elimina">
+                Elimina
+            </button>
+        </form>
                         </td>
                     </tr>
                     </#list>
@@ -112,7 +112,7 @@
             <!-- Form per aggiungere un nuovo utente (inizialmente nascosto) -->
             <form id="formAggiungiUtente" action="gestioneUtenti" method="post">
                 <h4 class="mt-4">Aggiungi Nuovo Utente</h4>
-                
+
                 <!-- Selezione tipo utente -->
                 <div class="mb-3">
                     <label class="form-label">Tipo Utente:</label>
@@ -162,7 +162,7 @@
                     <input type="date" class="form-control" id="dataAssunzione" name="dataAssunzione">
                 </div>
 
-                
+
 
                 <button type="submit" class="btn btn-primary" name="azione" value="aggiungi">Aggiungi</button>
                 <button type="button" id="annullaAggiungi" class="btn btn-secondary">Annulla</button>
@@ -170,33 +170,69 @@
         </div>
 
         <script>
-            // Mostra il form quando si clicca sul bottone "Aggiungi Utente"
-            document.getElementById('bottoneAggiungi').addEventListener('click', function() {
-                var form = document.getElementById('formAggiungiUtente');
-                form.style.display = 'block';
-            });
+    // Funzione per mostrare il pop-up di conferma eliminazione
+    function confermaEliminazione(event) {
+        // La funzione 'confirm()' di JavaScript mostra un pop-up con OK e Annulla.
+        // Se l'utente clicca OK, ritorna true (il form viene inviato).
+        // Se l'utente clicca Annulla, ritorna false (l'invio del form viene bloccato).
+        var conferma = confirm("Sei sicuro di voler eliminare questo utente/tecnico? Questa azione è irreversibile.");
+        
+        if (!conferma) {
+            // Impedisce l'invio del form se l'utente clicca Annulla
+            event.preventDefault(); 
+            return false;
+        }
+        
+        return true; // Procede con l'invio del form
+    }
 
-            // Nasconde il form quando si clicca su "Annulla"
-            document.getElementById('annullaAggiungi').addEventListener('click', function() {
-                var form = document.getElementById('formAggiungiUtente');
-                form.style.display = 'none';
-            });
+    // Mostra il form quando si clicca sul bottone "Aggiungi Utente"
+    document.getElementById('bottoneAggiungi').addEventListener('click', function() {
+        var form = document.getElementById('formAggiungiUtente');
+        form.style.display = 'block';
+        // Opzionale: Nascondi il bottone di aggiunta
+        this.style.display = 'none'; 
+    });
 
-            // Mostra/nascondi campi specifici in base al tipo di utente selezionato
-            document.querySelectorAll('input[name="tipoUtente"]').forEach(function(radio) {
-                radio.addEventListener('change', function() {
-                    var campoTecnico = document.getElementById('campoTecnico');
-                    var campoBudget = document.getElementById('campoBudget');
-                    
-                    if (this.value === 'tecnico') {
-                        campoTecnico.style.display = 'block';
-                        campoBudget.style.display = 'none';
-                    } else {
-                        campoTecnico.style.display = 'none';
-                        campoBudget.style.display = 'block';
-                    }
-                });
-            });
-        </script>
+    // Nasconde il form quando si clicca su "Annulla"
+    document.getElementById('annullaAggiungi').addEventListener('click', function() {
+        var form = document.getElementById('formAggiungiUtente');
+        form.style.display = 'none';
+        // Opzionale: Mostra di nuovo il bottone di aggiunta
+        document.getElementById('bottoneAggiungi').style.display = 'inline-block';
+    });
+
+    // Mostra/nascondi campi specifici in base al tipo di utente selezionato
+    document.querySelectorAll('input[name="tipoUtente"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            var campoTecnico = document.getElementById('campoTecnico');
+            // Nota: il campoBudget non esiste nell'HTML fornito, ho rimosso il riferimento.
+            
+            if (this.value === 'tecnico') {
+                campoTecnico.style.display = 'block';
+                // Assicurati che i campi "dataAssunzione" siano required solo se tecnico è selezionato.
+                document.getElementById('dataAssunzione').required = true;
+            } else {
+                campoTecnico.style.display = 'none';
+                document.getElementById('dataAssunzione').required = false;
+            }
+        });
+    });
+    
+    // Esegui la logica di visualizzazione iniziale per il tipo di utente predefinito (utenteRegistrato)
+    document.addEventListener('DOMContentLoaded', function() {
+        var tipoUtenteIniziale = document.querySelector('input[name="tipoUtente"]:checked').value;
+        var campoTecnico = document.getElementById('campoTecnico');
+        var dataAssunzioneInput = document.getElementById('dataAssunzione');
+
+        if (tipoUtenteIniziale === 'tecnico') {
+            campoTecnico.style.display = 'block';
+            dataAssunzioneInput.required = true;
+        } else {
+            campoTecnico.style.display = 'none';
+            dataAssunzioneInput.required = false;
+        }
+    });
+</script>
     </body>
 </html>

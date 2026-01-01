@@ -107,30 +107,26 @@ public class RichiesteTecnicoController extends ApplicationBaseController {
                 return;
             }
             
-            // CORREZIONE: usa il nuovo metodo getRichiestaAcquistoByID
             RichiestaAcquisto richiesta = dl.getRichiestaAcquistoDAO().getRichiestaAcquistoByID(idRichiesta);
             if (richiesta == null) {
                 response.sendRedirect("richiesteTecnico?error=1");
                 return;
             }
             
-            // Verifica che la richiesta non sia già in carico a qualcuno
             PresaInCarico presaEsistente = dl.getPresaInCaricoDAO().getPresaInCaricoByRichiestaID(idRichiesta);
             if (presaEsistente != null) {
                 response.sendRedirect("richiesteTecnico?error=2");
                 return;
             }
             
-            // Crea la presa in carico
+            
             PresaInCarico presaInCarico = dl.getPresaInCaricoDAO().createPresaInCarico();
             presaInCarico.setTecnicoKey(tecnicoId);
             presaInCarico.setRichiestaKey(idRichiesta);
             presaInCarico.setDataIncarico(new Timestamp(System.currentTimeMillis()));
             
-            // Inserisce la presa in carico nel database
             dl.getPresaInCaricoDAO().insertPresaInCarico(presaInCarico);
             
-            // Aggiorna lo stato della richiesta a "in_valutazione"
             richiesta.setStato("in_valutazione");
             dl.getRichiestaAcquistoDAO().updateRichiestaAcquisto(richiesta);
             response.sendRedirect("richiesteTecnico?success=1");
