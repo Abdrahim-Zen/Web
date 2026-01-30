@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package it.univaq.webmarket.data.dao;
 
 import it.univaq.webmarket.data.model.Tecnico;
@@ -15,8 +11,40 @@ import java.util.List;
  * @author abdrahimzeno
  */
 public interface TecnicoDAO {
-    void addTecnicobyAdmin(int id,Date data) throws SQLException;
+
+    /**
+     * aggiunge tecnico al db
+     *
+     * @param id id che fa riferimento ad utente
+     * @param data data assunzione
+     * @throws SQLException
+     */
+    void addTecnicobyAdmin(int id, Date data) throws SQLException;
+
+    /**
+     * restituisce tecnico dall'id
+     *
+     * @param id id del tecnico
+     * @return tecnico
+     * @throws DataException
+     */
     Tecnico getTecnicoByID(int id) throws DataException;
-    Tecnico getTecnicoByName(String n)throws DataException;
+
+    /**
+     * restituisce tecnico dal nome
+     *
+     * @param n nome del tecnico
+     * @return tecnico
+     * @throws DataException
+     */
+    Tecnico getTecnicoByName(String n) throws DataException;
+
+    /**
+     * restituisce lista di tecnici creati dallo stesso amministratore
+     *
+     * @param idAmministratore id dell'Amministratore
+     * @return lista di tecnici
+     * @throws DataException
+     */
     List<Tecnico> getTecnicoCreatiDa(int idAmministratore) throws DataException;
 }

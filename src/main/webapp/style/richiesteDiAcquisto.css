@@ -1,0 +1,34 @@
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        tr:hover {
+            background-color: transparent !important;
+        }
+
+    
+        .collapse {
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .collapse:not(.show) {
+            opacity: 0;
+            transform: translateY(-6px);
+        }
+
+        .collapse.show {
+            opacity: 1;
+            transform: translateY(0);
+        }

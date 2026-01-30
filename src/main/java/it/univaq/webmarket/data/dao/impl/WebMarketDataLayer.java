@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package it.univaq.webmarket.data.dao.impl;
 
 import it.univaq.webmarket.data.dao.AmministratoreDAO;
@@ -9,7 +6,6 @@ import it.univaq.webmarket.data.dao.CategoriaDAO;
 import it.univaq.webmarket.data.dao.OrdineDAO;
 import it.univaq.webmarket.data.dao.PresaInCaricoDAO;
 import it.univaq.webmarket.data.dao.ProdottoCandidatoDAO;
-import it.univaq.webmarket.data.dao.ProdottoDAO;
 import it.univaq.webmarket.data.dao.SpecificaCategoriaDAO;
 import it.univaq.webmarket.data.dao.TecnicoDAO;
 import it.univaq.webmarket.data.dao.UtenteDAO;
@@ -48,7 +44,6 @@ public class WebMarketDataLayer extends DataLayer {
         registerDAO(UtenteRegistrato.class, new UtenteRegistratoDAO_MySQL(this));
         registerDAO(Utente.class, new UtenteDAO_MySQL(this));
         registerDAO(Tecnico.class, new TecnicoDAO_MySQL(this));
-        registerDAO(Prodotto.class, new ProdottoDAO_MySQL(this));
         registerDAO(SpecificaCategoria.class, new SpecificaCategoriaDAO_MySQL(this));
         registerDAO(RichiestaAcquisto.class, new RichiestaAcquistoDAO_MySQL(this));
         registerDAO(Categoria.class,new CategoriaDAO_MySQL(this));
@@ -80,9 +75,6 @@ public class WebMarketDataLayer extends DataLayer {
         return  (TecnicoDAO) getDAO(Tecnico.class);
     }
     
-    public  ProdottoDAO getProdottoDAO(){
-        return (ProdottoDAO) getDAO(Prodotto.class);
-    }
     public SpecificaCategoriaDAO getSpecificaCategoriaDAO(){
         return  (SpecificaCategoriaDAO) getDAO(SpecificaCategoria.class);
     }

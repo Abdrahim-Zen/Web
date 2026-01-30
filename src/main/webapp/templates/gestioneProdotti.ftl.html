@@ -11,19 +11,17 @@
         <#include "header.ftl.html">
         <h1>Gestione Richieste in Carico</h1>
         
-        <!-- Debug info - CON CONTROLLO DI SICUREZZA -->
+     
         <div class="alert alert-info">
             Numero richieste: <#if richiesteInCarico??>${richiesteInCarico?size}<#else>0</#if>
         </div>
 
-        <!-- Messaggi di errore -->
         <#if error??>
             <div class="alert alert-danger">
                 ${error}
             </div>
         </#if>
 
-        <!-- Messaggi dalle request parameters -->
         <#if RequestParameters??>
             <#if RequestParameters.success??>
                 <div class="alert alert-success">
@@ -41,7 +39,7 @@
             </#if>
         </#if>
 
-        <!-- CONTROLLO PRINCIPALE CON ?? E has_content -->
+
         <#if richiesteInCarico?? && richiesteInCarico?has_content>
             <#list richiesteInCarico as richiesta>
                 <div class="card mb-4">
@@ -90,7 +88,6 @@
                             </#if>
                         </#if>
 
-                        <!-- Prodotti già proposti -->
                         <#assign prodottiKey = "prodottiRichiesta_" + richiesta.key>
                         <#if .data_model[prodottiKey]??>
                             <#assign prodottiProposti = .data_model[prodottiKey]>
@@ -109,7 +106,6 @@
                             </#if>
                         </#if>
 
-                        <!-- Form Proposta Prodotto -->
                         <form action="gestioneProdotti" method="post" class="mt-3">
                             <input type="hidden" name="action" value="proponiProdotto">
                             <input type="hidden" name="idRichiestaInCarico" value="${richiesta.key!''}">
@@ -156,6 +152,7 @@
                                 <p><strong>Importo:</strong> €${richiesta.importoTotale!''}</p>
                                 <p><strong>Categoria:</strong> ${richiesta.categoriaNome!''}</p>
                                 <p><strong>Motivazione:</strong> ${richiesta.motivazione!''}</p>
+                                <p><strong>Prodotto Proposto:</strong> ${richiesta.nomeProdottoCandidato!''}</p>
                             </div>
                             <div class="col-md-6">
                                 <p><strong>Cliente:</strong> ${richiesta.utenteNome!''} ${richiesta.utenteCognome!''}</p>
@@ -190,7 +187,6 @@
                             </#if>
                         </#if>
 
-                        <!-- Form Proposta Prodotto -->
                         <form action="gestioneProdotti" method="post" class="mt-3">
                             <input type="hidden" name="action" value="updateProdotto">
                             <input type="hidden" name="idRichiestaInCarico" value="${richiesta.idProdotto!''}">

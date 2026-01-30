@@ -2,35 +2,10 @@
 <html>
     <head>
         <title>Gestione utenti</title>
-        <style>
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 15px;
-            }
-            th, td {
-                border: 1px solid #ccc;
-                padding: 8px;
-                text-align: left;
-            }
-            th {
-                background-color: #f0f0f0;
-            }
-            #formAggiungiUtente {
-                display: none;
-                margin-top: 20px;
-                padding: 15px;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                background-color: #f9f9f9;
-            }
-            #campoTecnico {
-                display: none;
-                margin-top: 10px;
-            }
-        </style>
+
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style/gestioneUtenti.css"/>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" 
               crossorigin="anonymous">
@@ -104,16 +79,15 @@
                 </tbody>
             </table>
 
-            <!-- Bottone per mostrare il form di aggiunta utente -->
+
             <button id="bottoneAggiungi" class="btn btn-success mt-3">
                 <i class="bi bi-plus-circle"></i> Aggiungi Utente
             </button>
 
-            <!-- Form per aggiungere un nuovo utente (inizialmente nascosto) -->
+
             <form id="formAggiungiUtente" action="gestioneUtenti" method="post">
                 <h4 class="mt-4">Aggiungi Nuovo Utente</h4>
 
-                <!-- Selezione tipo utente -->
                 <div class="mb-3">
                     <label class="form-label">Tipo Utente:</label>
                     <div>
@@ -132,7 +106,6 @@
                     </div>
                 </div>
 
-                <!-- Campi comuni a tutti gli utenti -->
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
@@ -156,7 +129,6 @@
                     </div>
                 </div>
 
-                <!-- Campo specifico per tecnico (nascosto di default) -->
                 <div id="campoTecnico" class="mb-3">
                     <label for="dataAssunzione" class="form-label">Data Assunzione:</label>
                     <input type="date" class="form-control" id="dataAssunzione" name="dataAssunzione">
@@ -170,31 +142,29 @@
         </div>
 
         <script>
-    // Funzione per mostrare il pop-up di conferma eliminazione
+   
     function confermaEliminazione(event) {
-        // La funzione 'confirm()' di JavaScript mostra un pop-up con OK e Annulla.
-        // Se l'utente clicca OK, ritorna true (il form viene inviato).
-        // Se l'utente clicca Annulla, ritorna false (l'invio del form viene bloccato).
+      
         var conferma = confirm("Sei sicuro di voler eliminare questo utente/tecnico? Questa azione è irreversibile.");
         
         if (!conferma) {
-            // Impedisce l'invio del form se l'utente clicca Annulla
+           
             event.preventDefault(); 
             return false;
         }
         
-        return true; // Procede con l'invio del form
+        return true; 
     }
 
-    // Mostra il form quando si clicca sul bottone "Aggiungi Utente"
+ 
     document.getElementById('bottoneAggiungi').addEventListener('click', function() {
         var form = document.getElementById('formAggiungiUtente');
         form.style.display = 'block';
-        // Opzionale: Nascondi il bottone di aggiunta
+       
         this.style.display = 'none'; 
     });
 
-    // Nasconde il form quando si clicca su "Annulla"
+
     document.getElementById('annullaAggiungi').addEventListener('click', function() {
         var form = document.getElementById('formAggiungiUtente');
         form.style.display = 'none';
@@ -202,15 +172,15 @@
         document.getElementById('bottoneAggiungi').style.display = 'inline-block';
     });
 
-    // Mostra/nascondi campi specifici in base al tipo di utente selezionato
+    
     document.querySelectorAll('input[name="tipoUtente"]').forEach(function(radio) {
         radio.addEventListener('change', function() {
             var campoTecnico = document.getElementById('campoTecnico');
-            // Nota: il campoBudget non esiste nell'HTML fornito, ho rimosso il riferimento.
+           
             
             if (this.value === 'tecnico') {
                 campoTecnico.style.display = 'block';
-                // Assicurati che i campi "dataAssunzione" siano required solo se tecnico è selezionato.
+       
                 document.getElementById('dataAssunzione').required = true;
             } else {
                 campoTecnico.style.display = 'none';
@@ -219,7 +189,6 @@
         });
     });
     
-    // Esegui la logica di visualizzazione iniziale per il tipo di utente predefinito (utenteRegistrato)
     document.addEventListener('DOMContentLoaded', function() {
         var tipoUtenteIniziale = document.querySelector('input[name="tipoUtente"]:checked').value;
         var campoTecnico = document.getElementById('campoTecnico');

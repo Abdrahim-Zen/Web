@@ -23,6 +23,9 @@ public interface PresaInCarico extends DataItem<Integer> {
     String getStato();
     void setStato(String stato);
     
+    String getNomeProdottoCandidato();
+    void setNomeProdottoCandidato(String stato);
+    
     int getTecnicoKey();
     void setTecnicoKey(int tecnicoKey);
     

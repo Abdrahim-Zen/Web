@@ -36,6 +36,11 @@ public class UtenteRegistratoController extends ApplicationBaseController {
             response.sendRedirect("login?error=3");
             return;
         }
+        String userType = (String) session.getAttribute("userType");
+        if (!"utenteRegistrato".equals(userType)) {
+            response.sendRedirect("login?error=4");
+            return;
+        }
         String azione = request.getParameter("azione");
          if ("richiesta".equals(azione)) {
             InviaRichiesta(request, response);

@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package it.univaq.webmarket.data.model.impl;
 
 import it.univaq.webmarket.data.model.Amministratore;
@@ -21,7 +18,7 @@ public class TecnicoImpl extends DataItemImpl<Integer> implements Tecnico{
     private LocalDate dataAssunzione;
     private String password;
     private String email;
-    private String stato;
+ 
     public TecnicoImpl(){
         super();
         nome=null;
@@ -89,14 +86,6 @@ public class TecnicoImpl extends DataItemImpl<Integer> implements Tecnico{
         this.email=x; 
     }
 
-    @Override
-    public void setStato(String x) {
-       this.stato=x; 
-    }
 
-    @Override
-    public String getStato() {
-       return stato; 
-    }
     
 }

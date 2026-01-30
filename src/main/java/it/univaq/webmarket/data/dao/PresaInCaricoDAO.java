@@ -57,7 +57,7 @@ public interface PresaInCaricoDAO {
     void deletePresaInCarico(int id) throws DataException;
     
     /**
-     * Crea un nuovo oggetto PresaInCarico (vuoto)
+     * Crea un nuovo oggetto PresaInCarico 
      * @return una nuova presa in carico
      */
     PresaInCarico createPresaInCarico();

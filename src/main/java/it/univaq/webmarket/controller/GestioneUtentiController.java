@@ -26,7 +26,7 @@ import java.util.Map;
  *
  * @author abrah
  */
-public class GestioneUtenti extends ApplicationBaseController {
+public class GestioneUtentiController extends ApplicationBaseController {
 
     @Override
     public void init(ServletConfig config) throws jakarta.servlet.ServletException {
@@ -40,6 +40,12 @@ public class GestioneUtenti extends ApplicationBaseController {
 
         if (session == null) {
             response.sendRedirect("login?error=3");
+            return;
+        }
+
+        String userType = (String) session.getAttribute("userType");
+        if (!"amministratore".equals(userType)) {
+            response.sendRedirect("login?error=4");
             return;
         }
 
@@ -95,7 +101,7 @@ public class GestioneUtenti extends ApplicationBaseController {
             dataAssunzione = java.sql.Date.valueOf(data);
         } catch (IllegalArgumentException e) {
             // Gestisci l'errore se il formato non è valido
-            throw new ServletException("Formato data non valido. Usa YYYY-MM-DD: " + data, e);
+            throw new ServletException("Formato data non valido." + data, e);
         }
         String password = SecurityHelpers.getPasswordHashPBKDF2(request.getParameter("password"));
         HttpSession session = SecurityHelpers.checkSession(request);

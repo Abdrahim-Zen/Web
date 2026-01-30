@@ -33,35 +33,30 @@ public class SpecificaCategoriaDAO_MySQL extends DAO implements SpecificaCategor
     public void init() throws DataException {
         super.init();
         try {
-            // Query per ottenere le specifiche per una categoria
+
             sSpecificheByCategoriaId = connection.prepareStatement(
-                "SELECT * FROM specifica_categoria WHERE ID_categoria = ?"
+                    "SELECT * FROM specifica_categoria WHERE ID_categoria = ?"
             );
 
-            // Query per ottenere una specifica per id
             sSpecificaById = connection.prepareStatement(
-                "SELECT * FROM specifica_categoria WHERE ID = ?"
+                    "SELECT * FROM specifica_categoria WHERE ID = ?"
             );
 
-            // INSERT per aggiungere una nuova specifica
             iSpecifica = connection.prepareStatement(
-                "INSERT INTO specifica_categoria (ID_categoria, nome_specifica) VALUES (?, ?)",
-                Statement.RETURN_GENERATED_KEYS
+                    "INSERT INTO specifica_categoria (ID_categoria, nome_specifica) VALUES (?, ?)",
+                    Statement.RETURN_GENERATED_KEYS
             );
 
-            // UPDATE per modificare una specifica
             uSpecifica = connection.prepareStatement(
-                "UPDATE specifica_categoria SET nome_specifica = ? WHERE ID = ?"
+                    "UPDATE specifica_categoria SET nome_specifica = ? WHERE ID = ?"
             );
 
-            // DELETE per eliminare una specifica
             dSpecifica = connection.prepareStatement(
-                "DELETE FROM specifica_categoria WHERE ID = ?"
+                    "DELETE FROM specifica_categoria WHERE ID = ?"
             );
 
-            // DELETE per eliminare tutte le specifiche di una categoria
             dSpecificheByCategoria = connection.prepareStatement(
-                "DELETE FROM specifica_categoria WHERE ID_categoria = ?"
+                    "DELETE FROM specifica_categoria WHERE ID_categoria = ?"
             );
 
         } catch (SQLException ex) {
@@ -75,9 +70,9 @@ public class SpecificaCategoriaDAO_MySQL extends DAO implements SpecificaCategor
         List<SpecificaCategoria> specifiche = new ArrayList<>();
         try {
             sSpecificheByCategoriaId.setInt(1, idCategoria);
-            try (ResultSet rs = sSpecificheByCategoriaId.executeQuery()) {
+            try ( ResultSet rs = sSpecificheByCategoriaId.executeQuery()) {
                 while (rs.next()) {
-                    // usa l'id della specifica per caricare tramite getSpecificaCategoria()
+
                     specifiche.add(getSpecificaCategoria(rs.getInt("ID")));
                 }
             }
@@ -96,7 +91,7 @@ public class SpecificaCategoriaDAO_MySQL extends DAO implements SpecificaCategor
         } else {
             try {
                 sSpecificaById.setInt(1, id);
-                try (ResultSet rs = sSpecificaById.executeQuery()) {
+                try ( ResultSet rs = sSpecificaById.executeQuery()) {
                     if (rs.next()) {
                         spec = createSpecificaCategoria(rs);
                         dataLayer.getCache().add(SpecificaCategoria.class, spec);
@@ -114,17 +109,16 @@ public class SpecificaCategoriaDAO_MySQL extends DAO implements SpecificaCategor
         try {
             iSpecifica.setInt(1, idCategoria);
             iSpecifica.setString(2, nomeSpecifica);
-            
+
             int affectedRows = iSpecifica.executeUpdate();
             if (affectedRows == 0) {
                 throw new DataException("Inserimento specifica fallito, nessuna riga modificata.");
             }
-            
-            // Recupera l'ID generato
-            try (ResultSet generatedKeys = iSpecifica.getGeneratedKeys()) {
+
+            try ( ResultSet generatedKeys = iSpecifica.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     int idGenerato = generatedKeys.getInt(1);
-                    // Invalida la cache per forzare il ricaricamento
+
                     dataLayer.getCache().delete(SpecificaCategoria.class, idGenerato);
                     return idGenerato;
                 } else {
@@ -141,15 +135,14 @@ public class SpecificaCategoriaDAO_MySQL extends DAO implements SpecificaCategor
         try {
             uSpecifica.setString(1, nomeSpecifica);
             uSpecifica.setInt(2, idSpecifica);
-            
+
             int affectedRows = uSpecifica.executeUpdate();
             if (affectedRows == 0) {
                 throw new DataException("Aggiornamento specifica fallito, nessuna riga modificata.");
             }
-            
-            // Invalida la cache
+
             dataLayer.getCache().delete(SpecificaCategoria.class, idSpecifica);
-            
+
         } catch (SQLException ex) {
             throw new DataException("Errore durante l'aggiornamento della specifica", ex);
         }
@@ -159,15 +152,14 @@ public class SpecificaCategoriaDAO_MySQL extends DAO implements SpecificaCategor
     public void deleteSpecifica(int idSpecifica) throws DataException {
         try {
             dSpecifica.setInt(1, idSpecifica);
-            
+
             int affectedRows = dSpecifica.executeUpdate();
             if (affectedRows == 0) {
                 throw new DataException("Eliminazione specifica fallita, nessuna riga modificata.");
             }
-            
-            // Invalida la cache
+
             dataLayer.getCache().delete(SpecificaCategoria.class, idSpecifica);
-            
+
         } catch (SQLException ex) {
             throw new DataException("Errore durante l'eliminazione della specifica", ex);
         }
@@ -178,8 +170,7 @@ public class SpecificaCategoriaDAO_MySQL extends DAO implements SpecificaCategor
         try {
             dSpecificheByCategoria.setInt(1, idCategoria);
             dSpecificheByCategoria.executeUpdate();
-            
-         
+
         } catch (SQLException ex) {
             throw new DataException("Errore durante l'eliminazione delle specifiche della categoria", ex);
         }
@@ -200,12 +191,13 @@ public class SpecificaCategoriaDAO_MySQL extends DAO implements SpecificaCategor
     @Override
     public void destroy() throws DataException {
         try {
-            if (sSpecificheByCategoriaId != null) sSpecificheByCategoriaId.close();
-            if (sSpecificaById != null) sSpecificaById.close();
-            if (iSpecifica != null) iSpecifica.close();
-            if (uSpecifica != null) uSpecifica.close();
-            if (dSpecifica != null) dSpecifica.close();
-            if (dSpecificheByCategoria != null) dSpecificheByCategoria.close();
+            sSpecificheByCategoriaId.close();
+            sSpecificaById.close();
+            iSpecifica.close();
+            uSpecifica.close();
+            dSpecifica.close();
+            dSpecificheByCategoria.close();
+
         } catch (SQLException ex) {
             throw new DataException("Errore nella chiusura degli statement", ex);
         }

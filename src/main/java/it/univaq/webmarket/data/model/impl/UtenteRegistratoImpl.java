@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package it.univaq.webmarket.data.model.impl;
 
 import it.univaq.webmarket.data.model.Amministratore;
@@ -18,14 +15,13 @@ public class UtenteRegistratoImpl extends DataItemImpl<Integer> implements Utent
       private String cognome;
       private Amministratore amministratore;
       private String password;
-      private Double budgetDisponibile;
     public UtenteRegistratoImpl(){
         super();
         nome=null;
         cognome=null;
         amministratore=null;
         password=null;
-        budgetDisponibile=null;
+
     }
     @Override
     public String getPassword() {
@@ -37,15 +33,6 @@ public class UtenteRegistratoImpl extends DataItemImpl<Integer> implements Utent
         this.password=x; 
     }
 
-    @Override
-    public Double getBudgetDisponibile() {
-       return budgetDisponibile; 
-    }
-
-    @Override
-    public void setBudgetDisponibile(Double x) {
-        this.budgetDisponibile=x;
-    }
 
     @Override
     public String getNome() {

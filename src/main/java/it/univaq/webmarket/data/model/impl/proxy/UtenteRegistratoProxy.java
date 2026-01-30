@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package it.univaq.webmarket.data.model.impl.proxy;
 
 import it.univaq.webmarket.data.model.Amministratore;
@@ -31,21 +28,17 @@ public class UtenteRegistratoProxy extends UtenteRegistratoImpl implements DataI
         setModified(true);
     }
 
-    @Override
-    public void setBudgetDisponibile(Double x) {
-        super.setBudgetDisponibile(x);
-        setModified(true);
-    }
+   
 
     @Override
     public void setNome(String name) {
-        super.setNome(name); // oppure this.nome = name;
+        super.setNome(name); 
         setModified(true);
     }
 
     @Override
     public void setCognome(String surname) {
-        super.setCognome(surname); // oppure this.cognome = surname;
+        super.setCognome(surname); 
         setModified(true);
     }
 
@@ -72,7 +65,7 @@ public class UtenteRegistratoProxy extends UtenteRegistratoImpl implements DataI
     }
 
     public void setAmministratore_key(int aInt) {
-        this.Amministratore_key = aInt; // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.Amministratore_key = aInt; 
     }
 
 }

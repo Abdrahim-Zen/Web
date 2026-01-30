@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package it.univaq.webmarket.data.dao.impl;
 
 import it.univaq.webmarket.data.dao.PresaInCaricoDAO;
@@ -38,7 +34,7 @@ public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
     public void init() throws DataException {
         super.init();
         try {
-            // Query per ottenere le richieste in carico di un tecnico con informazioni complete
+
             sRichiesteInCaricoByTecnico = connection.prepareStatement(
                     "SELECT rc.ID, rc.data_incarico, rc.ID_tecnico, rc.ID_richiesta, "
                     + "r.note, r.importo_totale, rc.completato, "
@@ -52,7 +48,7 @@ public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
                     + "ORDER BY rc.data_incarico DESC"
             );
 
-            sRichiesteInCaricoByTecnicoRifiutati = connection.prepareStatement("SELECT rc.ID, rc.data_incarico, rc.ID_tecnico, rc.ID_richiesta, p.stato, p.motivazione, p.ID as prodotto, "
+            sRichiesteInCaricoByTecnicoRifiutati = connection.prepareStatement("SELECT rc.ID, rc.data_incarico, rc.ID_tecnico, rc.ID_richiesta, p.stato, p.motivazione, p.ID as prodotto,p.nome as prodottoNome, "
                     + "r.note, r.importo_totale, rc.completato, "
                     + "u.nome as utenteNome, u.cognome as utenteCognome, "
                     + "c.nome as categoriaNome "
@@ -76,14 +72,12 @@ public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
                     "SELECT * FROM richiesteInCarico WHERE ID_richiesta = ?"
             );
 
-            // CORREZIONE: rimossa la colonna 'stato' dalla query
             iPresaInCarico = connection.prepareStatement(
                     "INSERT INTO richiesteInCarico (data_incarico, ID_tecnico, ID_richiesta) "
                     + "VALUES (?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS
             );
 
-            // CORREZIONE: rimossa la colonna 'stato' dalla query
             uPresaInCarico = connection.prepareStatement(
                     "UPDATE richiesteInCarico SET data_incarico = ?, "
                     + "ID_tecnico = ?, ID_richiesta = ? WHERE ID = ?"
@@ -116,17 +110,18 @@ public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
         }
         return richieste;
     }
+
     @Override
-    public List<PresaInCarico> getRichiesteRifiutateByTecnico(int idTecnico) throws DataException{
+    public List<PresaInCarico> getRichiesteRifiutateByTecnico(int idTecnico) throws DataException {
         List<PresaInCarico> richieste = new ArrayList<>();
-        try{
-            sRichiesteInCaricoByTecnicoRifiutati.setInt(1,idTecnico);
+        try {
+            sRichiesteInCaricoByTecnicoRifiutati.setInt(1, idTecnico);
             ResultSet rs = sRichiesteInCaricoByTecnicoRifiutati.executeQuery();
             while (rs.next()) {
                 PresaInCarico presa = createPresaInCarico(rs);
                 richieste.add(presa);
             }
-        }catch (SQLException ex) {
+        } catch (SQLException ex) {
             throw new DataException("Errore nel recupero delle richieste in carico", ex);
         }
         return richieste;
@@ -152,7 +147,6 @@ public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
         return presa;
     }
 
-    // Aggiungi questo metodo
     @Override
     public void segnaComeCompletato(int idRichiestaInCarico) throws DataException {
         try {
@@ -182,7 +176,7 @@ public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
     @Override
     public int insertPresaInCarico(PresaInCarico presa) throws DataException {
         try {
-            // CORREZIONE: rimossa la setString per 'stato' e adjustati gli indici
+
             iPresaInCarico.setTimestamp(1, presa.getDataIncarico());
             iPresaInCarico.setInt(2, presa.getTecnicoKey());
             iPresaInCarico.setInt(3, presa.getRichiestaKey());
@@ -192,7 +186,7 @@ public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
                 throw new DataException("Inserimento fallito, nessuna riga interessata");
             }
 
-            try (ResultSet generatedKeys = iPresaInCarico.getGeneratedKeys()) {
+            try ( ResultSet generatedKeys = iPresaInCarico.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     int generatedId = generatedKeys.getInt(1);
                     presa.setKey(generatedId);
@@ -210,7 +204,7 @@ public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
     @Override
     public void updatePresaInCarico(PresaInCarico presa) throws DataException {
         try {
-            // CORREZIONE: rimossa la setString per 'stato' e adjustati gli indici
+
             uPresaInCarico.setTimestamp(1, presa.getDataIncarico());
             uPresaInCarico.setInt(2, presa.getTecnicoKey());
             uPresaInCarico.setInt(3, presa.getRichiestaKey());
@@ -218,7 +212,6 @@ public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
 
             uPresaInCarico.executeUpdate();
 
-            // Aggiorna la cache
             dataLayer.getCache().add(PresaInCarico.class, presa);
         } catch (SQLException ex) {
             throw new DataException("Errore nell'aggiornamento della presa in carico con ID: " + presa.getKey(), ex);
@@ -234,7 +227,6 @@ public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
                 throw new DataException("Eliminazione fallita, nessuna riga interessata per ID: " + id);
             }
 
-            // Rimuovi dalla cache
             dataLayer.getCache().delete(PresaInCarico.class, id);
         } catch (SQLException ex) {
             throw new DataException("Errore nell'eliminazione della presa in carico con ID: " + id, ex);
@@ -248,7 +240,7 @@ public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
         presa.setCompletato(rs.getBoolean("completato"));
         presa.setTecnicoKey(rs.getInt("ID_tecnico"));
         presa.setRichiestaKey(rs.getInt("ID_richiesta"));
-        
+
         // Imposta i dati aggiuntivi se presenti (dalle JOIN)
         try {
             presa.setNoteRichiesta(rs.getString("note"));
@@ -258,6 +250,7 @@ public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
             presa.setCategoriaNome(rs.getString("categoriaNome"));
             presa.setMotivazione(rs.getString("motivazione"));
             presa.setIdProdotto(rs.getString("prodotto"));
+            presa.setNomeProdottoCandidato(rs.getString("prodottoNome"));
         } catch (SQLException e) {
             // I campi aggiuntivi potrebbero non essere presenti in tutte le query
             // Ignora l'eccezione se si tratta di colonne non trovate
@@ -277,24 +270,19 @@ public class PresaInCaricoDAO_MySQL extends DAO implements PresaInCaricoDAO {
     @Override
     public void destroy() throws DataException {
         try {
-            if (sRichiesteInCaricoByTecnico != null) {
-                sRichiesteInCaricoByTecnico.close();
-            }
-            if (sPresaInCaricoByID != null) {
-                sPresaInCaricoByID.close();
-            }
-            if (sPresaInCaricoByRichiestaID != null) {
-                sPresaInCaricoByRichiestaID.close();
-            }
-            if (iPresaInCarico != null) {
-                iPresaInCarico.close();
-            }
-            if (uPresaInCarico != null) {
-                uPresaInCarico.close();
-            }
-            if (dPresaInCarico != null) {
-                dPresaInCarico.close();
-            }
+
+            sRichiesteInCaricoByTecnico.close();
+
+            sPresaInCaricoByID.close();
+
+            sPresaInCaricoByRichiestaID.close();
+
+            iPresaInCarico.close();
+
+            uPresaInCarico.close();
+
+            dPresaInCarico.close();
+
         } catch (SQLException ex) {
             throw new DataException("Errore nella chiusura delle prepared statements", ex);
         }

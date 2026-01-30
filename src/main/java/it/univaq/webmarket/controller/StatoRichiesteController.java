@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
+
 package it.univaq.webmarket.controller;
 
 import it.univaq.webmarket.application.ApplicationBaseController;
@@ -40,6 +37,11 @@ public class StatoRichiesteController extends ApplicationBaseController {
             response.sendRedirect("login?error=3");
             return;
         }
+        String userType = (String) session.getAttribute("userType");
+        if (!"utenteRegistrato".equals(userType)) {
+            response.sendRedirect("login?error=4");
+            return;
+        }
         WebMarketDataLayer dl = (WebMarketDataLayer) request.getAttribute("datalayer");
         Integer idUtente = (Integer) session.getAttribute("userid");
         String username = (String) session.getAttribute("username");
@@ -49,7 +51,6 @@ public class StatoRichiesteController extends ApplicationBaseController {
 
         for (RichiestaAcquisto richiesta : richieste) {
             try {
-                // Recupera le specifiche della richiesta usando il nuovo metodo
                 List<Map<String, String>> specifiche
                         = dl.getRichiestaAcquistoDAO().getSpecificheByRichiestaId(richiesta
                                 .getKey());
@@ -62,8 +63,8 @@ public class StatoRichiesteController extends ApplicationBaseController {
             }
 
         }
-        String type = (String) session.getAttribute("userType");
-        datamodel.put("userType", type);
+        
+        datamodel.put("userType", userType);
         datamodel.put("richieste", richieste);
         datamodel.put("username", username);
         TemplateResult result = new TemplateResult(getServletContext());

@@ -8,46 +8,9 @@
               integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" 
               crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="style/richiestaAcquisto.css"/>
         
-        <style>
-            /* 1. Sfondo del corpo completamente bianco (come da richiesta) */
-            body {
-                background-color: #FFFFFF;
-                color: #212529; /* Testo scuro */
-            }
 
-            /* 2. Specifiche nascoste di default */
-            .specifiche {
-                display: none; 
-            }
-            
-            /* 3. Stile neutro e interattivo per il blocco categoria */
-            .category-card {
-                cursor: pointer;
-                border: 2px solid #e9ecef; /* Bordo leggero e neutro */
-                transition: all 0.2s ease;
-                background-color: #f8f9fa; /* Grigio chiarissimo per risalto */
-                text-align: center;
-                border-radius: 0.5rem;
-                padding: 1.5rem;
-            }
-            .category-card:hover {
-                border-color: #6c757d; /* Grigio scuro all'hover */
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
-            
-            /* 4. Stile per la card selezionata (neutro: grigio scuro) */
-            .category-card.selected {
-                border-color: #343a40; 
-                background-color: #e9ecef; /* Grigio chiaro per evidenziare */
-                box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
-            }
-            
-            /* 5. Nasconde il radio button nativo */
-            .category-card input[type="radio"] {
-                display: none;
-            }
-        </style>
     </head>
     
     <body>
@@ -147,7 +110,6 @@
         </div>
 
         <script>
-            // Funzione per la gestione delle specifiche (invariata)
             function mostraSpecifiche(catKey) {
                 document.querySelectorAll('.specifiche').forEach(div => {
                     div.style.display = 'none';
@@ -158,7 +120,6 @@
                 }
             }
 
-            // Funzione per la gestione della selezione categoria (invariata)
             function handleCategorySelection(radioElement) {
                 const catKey = radioElement.value;
                 document.querySelectorAll('.category-card').forEach(label => {
@@ -168,11 +129,10 @@
                 mostraSpecifiche(catKey);
             }
             
-            // NUOVA FUNZIONE: Blocca l'inserimento o la modifica a un valore negativo
+
             function checkNegative(input) {
-                // Converte il valore in numero e controlla se è minore di zero
+
                 if (parseFloat(input.value) < 0) {
-                    // Se è negativo, imposta il valore a 0
                     input.value = 0;
                 }
             }

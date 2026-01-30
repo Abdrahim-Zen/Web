@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package it.univaq.webmarket.controller;
 
 import it.univaq.webmarket.application.ApplicationBaseController;
@@ -21,35 +17,37 @@ import java.util.Map;
  *
  * @author abrah
  */
-
 public class AmministratoreController extends ApplicationBaseController {
-    
-     @Override
+
+    @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
     }
-    
+
     @Override
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, TemplateManagerException {
         HttpSession session = SecurityHelpers.checkSession(request);
-        if(session==null){
+        String userType = (String) session.getAttribute("userType");
+        if (session == null) {
             response.sendRedirect("login?error=3");
             return;
         }
+        if (!"amministratore".equals(userType)) {
+            response.sendRedirect("login?error=4");
+            return;
+        }
         String azione = request.getParameter("azione");
-         if ("gestione utenti".equals(azione)) {
+        if ("gestione utenti".equals(azione)) {
             GestioneUtenti(request, response);
         } else if ("gestione prodotti".equals(azione)) {
-           GestioneProdotti(request,response);
+            GestioneProdotti(request, response);
+        }  else {
+            action_default(request, response);
         }
-        else if ("gestione ordini".equals(azione)) {
-           GestioneOrdini(request,response);
-        }else{
-        action_default(request, response);}
-        
+
     }
-    
+
     private void action_default(HttpServletRequest request, HttpServletResponse response) throws TemplateManagerException, IOException {
         TemplateResult result = new TemplateResult(getServletContext());
         Map<String, Object> datamodel = new HashMap<>();
@@ -63,10 +61,8 @@ public class AmministratoreController extends ApplicationBaseController {
 
     }
 
-    
-
     private void GestioneUtenti(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.sendRedirect("gestioneUtenti"); 
+        response.sendRedirect("gestioneUtenti");
     }
 
     private void GestioneProdotti(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -74,7 +70,7 @@ public class AmministratoreController extends ApplicationBaseController {
     }
 
     private void GestioneOrdini(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.sendRedirect("gestioneOrdini"); 
+        response.sendRedirect("gestioneOrdini");
     }
 
 }

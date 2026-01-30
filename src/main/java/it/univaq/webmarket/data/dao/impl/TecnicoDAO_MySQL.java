@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package it.univaq.webmarket.data.dao.impl;
 
 import it.univaq.webmarket.data.dao.TecnicoDAO;
@@ -35,6 +31,19 @@ public class TecnicoDAO_MySQL extends DAO implements TecnicoDAO {
     }
 
     @Override
+    public void destroy() throws DataException {
+        try {
+            sTecnicoByAdmin.close();
+            sTecnicoByID.close();
+            sTecnicoByName.close();
+            iTecnico.close();
+        } catch (SQLException ex) {
+            throw new DataException("Errore nella chiusura degli statement", ex);
+        }
+        super.destroy();
+    }
+
+    @Override
     public void init() throws DataException {
         super.init();
 
@@ -46,10 +55,10 @@ public class TecnicoDAO_MySQL extends DAO implements TecnicoDAO {
             sTecnicoByID = connection.prepareStatement("SELECT * "
                     + "FROM utente u JOIN tecnico t ON u.ID = t.ID "
                     + "WHERE u.ID = ?");
-            sTecnicoByAdmin=connection.prepareStatement("SELECT u.*, t.data_assunzione, t.stato FROM utente u " +
-                 "JOIN tecnico t ON u.ID = t.ID " +
-                 "WHERE u.creato_da = ?");
-            iTecnico=connection.prepareStatement("INSERT INTO tecnico (ID, data_assunzione) VALUES (?, ?)");
+            sTecnicoByAdmin = connection.prepareStatement("SELECT u.*, t.data_assunzione FROM utente u "
+                    + "JOIN tecnico t ON u.ID = t.ID "
+                    + "WHERE u.creato_da = ?");
+            iTecnico = connection.prepareStatement("INSERT INTO tecnico (ID, data_assunzione) VALUES (?, ?)");
         } catch (SQLException ex) {
             Logger.getLogger(TecnicoDAO_MySQL.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -71,17 +80,17 @@ public class TecnicoDAO_MySQL extends DAO implements TecnicoDAO {
         }
         return t;
     }
-    
+
     @Override
     public List<Tecnico> getTecnicoCreatiDa(int idAmministratore) throws DataException {
         List<Tecnico> utenti = new ArrayList<>();
         try {
             sTecnicoByAdmin.setInt(1, idAmministratore);
             ResultSet rs = sTecnicoByAdmin.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 Tecnico u = createTecnico(rs);
                 utenti.add(u);
-                 dataLayer.getCache().add(Tecnico.class, u);
+                dataLayer.getCache().add(Tecnico.class, u);
             }
         } catch (SQLException ex) {
             Logger.getLogger(UtenteDAO_MySQL.class.getName()).log(Level.SEVERE, null, ex);
@@ -111,9 +120,9 @@ public class TecnicoDAO_MySQL extends DAO implements TecnicoDAO {
         }
         return t;
     }
-    
+
     @Override
-    public void addTecnicobyAdmin(int id,Date data) throws SQLException{
+    public void addTecnicobyAdmin(int id, Date data) throws SQLException {
         iTecnico.setInt(1, id);
         iTecnico.setDate(2, data);
         iTecnico.executeUpdate();
@@ -130,7 +139,7 @@ public class TecnicoDAO_MySQL extends DAO implements TecnicoDAO {
             a.setKey(rs.getInt("ID"));
             a.setDataAssunzione(rs.getDate("data_assunzione").toLocalDate());
             a.setPassword(rs.getString("password"));
-            a.setStato(rs.getString("stato"));
+
             a.setEmail(rs.getString("email"));
             a.setCognome(rs.getString("cognome"));
             return a;

@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
+
 package it.univaq.webmarket.controller;
 
 import it.univaq.webmarket.application.ApplicationBaseController;
@@ -44,6 +41,7 @@ public class RichiestaAcquistoController extends ApplicationBaseController {
             response.sendRedirect("login?error=3");
             return;
         }
+        
         if (request.getParameter("richiestaAcquisto") != null) {
             invioRichiesta(request, response);
         }

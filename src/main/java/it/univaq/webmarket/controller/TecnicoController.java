@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
+
 package it.univaq.webmarket.controller;
 
 import it.univaq.webmarket.application.ApplicationBaseController;
@@ -36,13 +33,22 @@ public class TecnicoController extends ApplicationBaseController {
             response.sendRedirect("login?error=3");
             return;
         }
+        String userType = (String) session.getAttribute("userType");
+        if (!"tecnico".equals(userType)) {
+            response.sendRedirect("login?error=4");
+            return;
+        }
         String azione = request.getParameter("azione");
         if ("a".equals(azione)) {
           response.sendRedirect("richiesteTecnico");
         }  else if ("b".equals(azione)) {
             response.sendRedirect("gestioneProdotti");
 
-        } else {
+        } else if ("c".equals(azione)) {
+            response.sendRedirect("gestioneOrdini");
+
+        }
+        else {
             action_default(request, response);
         }
     }

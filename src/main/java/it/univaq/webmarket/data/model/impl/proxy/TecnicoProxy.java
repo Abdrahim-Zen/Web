@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package it.univaq.webmarket.data.model.impl.proxy;
 
 import it.univaq.webmarket.data.model.Amministratore;
@@ -56,11 +53,7 @@ public class TecnicoProxy extends TecnicoImpl implements DataItemProxy {
         setModified(true);
     }
     
-    @Override
-    public void setStato(String x){
-        super.setStato(x);
-        setModified(true);
-    }
+   
 
     @Override
     public boolean isModified() {

@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
+
 package it.univaq.webmarket.controller;
 
 import it.univaq.webmarket.application.ApplicationBaseController;
@@ -42,6 +39,11 @@ public class ProdottoCandidatoController extends ApplicationBaseController {
             response.sendRedirect("login?error=3");
             return;
         }
+        String userType = (String) session.getAttribute("userType");
+        if (!"utenteRegistrato".equals(userType)) {
+            response.sendRedirect("login?error=4");
+            return;
+        }
         String azione = request.getParameter("azione");
         if ("accetta".equals(azione)) {
             accettazione(request, response);
@@ -54,6 +56,8 @@ public class ProdottoCandidatoController extends ApplicationBaseController {
         List<ProdottoCandidato> prodotti = dl.getProdottoCandidatoDAO().getProdottiCandidatiByUserID(idUtente);
         Map<String, Object> datamodel = new HashMap<>();
         String type = (String) session.getAttribute("userType");
+        String username = (String) session.getAttribute("username");
+        datamodel.put("username",username);
         datamodel.put("userType", type);
         datamodel.put("prodotti", prodotti);
         TemplateResult result = new TemplateResult(getServletContext());

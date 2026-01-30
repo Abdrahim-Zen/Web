@@ -75,14 +75,14 @@ public class CategoriaDAO_MySQL extends DAO implements CategoriaDAO {
             while (rs.next()) {
                 int categoriaId = rs.getInt("ID");
                 
-                // Se è una nuova categoria
+                
                 if (currentCategoria == null || currentCategoria.getKey() != categoriaId) {
                     currentCategoria = createCategoria(rs);
                     categorie.add(currentCategoria);
                     dataLayer.getCache().add(Categoria.class, currentCategoria);
                 }
                 
-                // Aggiungi la specifica se esiste
+             
                 int specId = rs.getInt("spec_id");
                 if (!rs.wasNull()) {
                     SpecificaCategoria specifica = createSpecificaCategoria(rs);
@@ -167,7 +167,7 @@ public class CategoriaDAO_MySQL extends DAO implements CategoriaDAO {
                 throw new DataException("Updating categoria failed, no rows affected.");
             }
             
-            // Invalida la cache
+          
             dataLayer.getCache().delete(Categoria.class, id);
             
         } catch (SQLException ex) {
@@ -185,7 +185,7 @@ public class CategoriaDAO_MySQL extends DAO implements CategoriaDAO {
                 throw new DataException("Deleting categoria failed, no rows affected.");
             }
             
-            // Invalida la cache
+           
             dataLayer.getCache().delete(Categoria.class, id);
             
         } catch (SQLException ex) {
@@ -196,12 +196,12 @@ public class CategoriaDAO_MySQL extends DAO implements CategoriaDAO {
     @Override
     public void destroy() throws DataException {
         try {
-            if (sAllCategorie != null) sAllCategorie.close();
-            if (sCategoriaById != null) sCategoriaById.close();
-            if (iCategoria != null) iCategoria.close();
-            if (uCategoria != null) uCategoria.close();
-            if (dCategoria != null) dCategoria.close();
-            if (sCategorieWithSpecifiche != null) sCategorieWithSpecifiche.close();
+           sAllCategorie.close();
+            sCategoriaById.close();
+            iCategoria.close();
+            uCategoria.close();
+            dCategoria.close();
+           sCategorieWithSpecifiche.close();
         } catch (SQLException ex) {
             throw new DataException("Error closing statements", ex);
         }

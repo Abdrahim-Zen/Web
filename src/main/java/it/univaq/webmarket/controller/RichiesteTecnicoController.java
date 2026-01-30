@@ -1,5 +1,4 @@
 package it.univaq.webmarket.controller;
-
 import it.univaq.webmarket.application.ApplicationBaseController;
 import it.univaq.webmarket.data.dao.impl.WebMarketDataLayer;
 import it.univaq.webmarket.data.model.PresaInCarico;

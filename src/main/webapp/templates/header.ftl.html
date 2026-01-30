@@ -3,7 +3,6 @@
     <header>
         <nav style="display: flex; justify-content: space-between; align-items: center; padding: 0 20px;">
             <h2>
-                <#-- Determina la destinazione in modo esplicito -->
                 <#assign destination = "login">
                 <#if userType??>
                     <#assign destination = userType>
@@ -19,7 +18,6 @@
                         
                     </span>
                     
-                    <#-- Inizio del Form di Logout -->
                     <form  method="post" action="logout" style="margin: 0;">
                         <button type="submit" 
                             style="
@@ -36,7 +34,6 @@
                             Logout
                         </button>
                     </form>
-                    <#-- Fine del Form di Logout -->
                 </#if>
             </div>
         </nav>

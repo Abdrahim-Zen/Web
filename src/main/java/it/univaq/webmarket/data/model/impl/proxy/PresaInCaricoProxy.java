@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package it.univaq.webmarket.data.model.impl.proxy;
 
 import it.univaq.webmarket.data.model.impl.PresaInCaricoImpl;
@@ -24,6 +21,11 @@ public class PresaInCaricoProxy extends PresaInCaricoImpl implements DataItemPro
     @Override
     public void setDataIncarico(Timestamp dataIncarico) {
         super.setDataIncarico(dataIncarico);
+        setModified(true);
+    }
+    @Override
+    public void setNomeProdottoCandidato(String x){
+        super.setNomeProdottoCandidato(x);
         setModified(true);
     }
 
@@ -57,9 +59,6 @@ public class PresaInCaricoProxy extends PresaInCaricoImpl implements DataItemPro
         setModified(true);
     }
 
-    // NOTA: I metodi per i dati aggiuntivi (noteRichiesta, importoTotale, etc.)
-    // non settano modified=true perché non sono campi persistenti nel database
-    // ma vengono calcolati tramite JOIN
     @Override
     public boolean isModified() {
         return modified;

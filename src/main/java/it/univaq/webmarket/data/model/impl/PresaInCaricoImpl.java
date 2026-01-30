@@ -27,6 +27,7 @@ public class PresaInCaricoImpl extends DataItemImpl<Integer> implements PresaInC
     private String categoriaNome;
     private String motivazione;
     private String idProdotto;
+    private String nomeProdottoCandidato;
     
 
     // Relazioni
@@ -235,5 +236,15 @@ public class PresaInCaricoImpl extends DataItemImpl<Integer> implements PresaInC
     @Override
     public void seIdProdotto(String x) {
         this.idProdotto=x; 
+    }
+
+    @Override
+    public String getNomeProdottoCandidato() {
+       return nomeProdottoCandidato; 
+    }
+
+    @Override
+    public void setNomeProdottoCandidato(String x) {
+        this.nomeProdottoCandidato=x; 
     }
 }

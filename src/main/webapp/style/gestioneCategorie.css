@@ -1,0 +1,24 @@
+            .category-card {
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                transition: box-shadow 0.3s ease;
+            }
+            .category-card:hover {
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+            .spec-item {
+                background-color: #f8f9fa;
+                border-radius: 4px;
+                padding: 8px 12px;
+                margin: 5px 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .form-container {
+                background-color: #f8f9fa;
+                border-radius: 8px;
+                padding: 20px;
+                margin-bottom: 30px;
+            }

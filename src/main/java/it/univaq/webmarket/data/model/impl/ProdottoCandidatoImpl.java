@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package it.univaq.webmarket.data.model.impl;
 
 import it.univaq.webmarket.data.model.ProdottoCandidato;
@@ -122,16 +119,4 @@ public class ProdottoCandidatoImpl extends DataItemImpl<Integer> implements Prod
         }
     }
     
-    @Override
-    public String toString() {
-        return "ProdottoCandidatoImpl{" +
-                "key=" + getKey() +
-                ", nome='" + nome + '\'' +
-                ", descrizione='" + descrizione + '\'' +
-                ", prezzo=" + prezzo +
-                ", dataProposta=" + dataProposta +
-                ", tecnicoKey=" + tecnicoKey +
-                ", richiestaKey=" + richiestaKey +
-                '}';
-    }
 }

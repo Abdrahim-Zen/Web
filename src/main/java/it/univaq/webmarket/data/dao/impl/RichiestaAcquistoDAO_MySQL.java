@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package it.univaq.webmarket.data.dao.impl;
 
 import it.univaq.webmarket.data.model.RichiestaAcquisto;
@@ -165,7 +162,7 @@ public class RichiestaAcquistoDAO_MySQL extends DAO implements RichiestaAcquisto
         return specifiche;
     }
 
-    // Metodo per recuperare le richieste non associate con le loro specifiche
+
     public List<RichiestaAcquisto> getRichiesteNonAssociateConSpecifiche() throws DataException {
         List<RichiestaAcquisto> richieste = new ArrayList<>();
         try {
@@ -224,7 +221,7 @@ public class RichiestaAcquistoDAO_MySQL extends DAO implements RichiestaAcquisto
     public RichiestaAcquisto getRichiestaAcquistoByID(int id) throws DataException {
         RichiestaAcquisto richiesta = null;
         try {
-            // Controlla prima la cache
+        
             if (dataLayer.getCache().has(RichiestaAcquisto.class, id)) {
                 richiesta = dataLayer.getCache().get(RichiestaAcquisto.class, id);
             } else {
@@ -291,7 +288,7 @@ public class RichiestaAcquistoDAO_MySQL extends DAO implements RichiestaAcquisto
                     + "FROM richiestaAcquisto r "
                     + "JOIN categoria c ON r.ID_categoria = c.ID "
                     + "WHERE r.stato = 'in_attesa' "
-                    + // Solo richieste in attesa
+                    + 
                     "AND NOT EXISTS ( "
                     + "    SELECT 1 FROM richiesteInCarico rc "
                     + "    WHERE rc.ID_richiesta = r.ID "
@@ -324,5 +321,22 @@ public class RichiestaAcquistoDAO_MySQL extends DAO implements RichiestaAcquisto
         return richiesta;
 
     }
+    @Override
+public void destroy() throws DataException {
+    try {
+        iRichiesta.close();
+        uRichiesta.close();
+        sRichiestaByUtente.close();
+        sRichiestaById.close();
+        uRichiestaByProdottoCandidatoAcc.close();
+        uRichiestaByProdottoCandidatoRif.close();
+        sRichiestaNonPreseInCarico.close();
+        sSpecificheByRichiestaId.close();
+        sRichiesteNonAssociateConSpecifiche.close();
+    } catch (SQLException ex) {
+        throw new DataException("Errore nella chiusura degli statement", ex);
+    }
+    super.destroy();
+}
 
 }

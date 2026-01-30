@@ -14,8 +14,7 @@ public interface Tecnico extends Utente{
     
     LocalDate getDataAssunzione();
     void setDataAssunzione(LocalDate x);
-    void setStato(String x);
-    String getStato();
+   
     
     
 }

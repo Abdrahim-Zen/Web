@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package it.univaq.webmarket.data.model.impl;
 
 import it.univaq.webmarket.data.model.Categoria;
@@ -26,12 +23,12 @@ public class ProdottoImpl extends DataItemImpl<Integer> implements Prodotto{
     }
     @Override
     public Double getPrezzo() {
-        return prezzo; // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return prezzo; 
     }
 
     @Override
     public void setPrezzo(Double x) {
-        this.prezzo=x; // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.prezzo=x;
     }
 
     @Override
