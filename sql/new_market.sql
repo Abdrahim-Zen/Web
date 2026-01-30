@@ -28,7 +28,6 @@ FOREIGN KEY (creato_da) REFERENCES amministratore(ID) ON DELETE CASCADE
 
 CREATE TABLE utenteRegistrato (
     ID INT UNSIGNED PRIMARY KEY ,
-    budget_disponibile DECIMAL(10, 2),
     FOREIGN KEY (ID) REFERENCES utente(ID) ON DELETE CASCADE
     
 );
@@ -36,7 +35,6 @@ CREATE TABLE utenteRegistrato (
 CREATE TABLE tecnico(
     ID INT UNSIGNED PRIMARY KEY,
     data_assunzione DATE NOT NULL,
-    stato ENUM('in_attesa', 'assegnato') NOT NULL DEFAULT 'in_attesa',
     FOREIGN KEY (ID) REFERENCES utente(ID) ON DELETE CASCADE 
     );
 
@@ -47,9 +45,9 @@ CREATE TABLE categoria (
 
 CREATE TABLE specifica_categoria (
     ID INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-    ID_categoria INT UNSIGNED NOT NULL,
+    
     nome_specifica VARCHAR(100) NOT NULL,
-    FOREIGN KEY (ID_categoria) REFERENCES categoria(ID) ON DELETE CASCADE
+    FOREIGN KEY (ID) REFERENCES categoria(ID) ON DELETE CASCADE
 );
 
 CREATE TABLE richiestaAcquisto (
@@ -68,7 +66,7 @@ CREATE TABLE specifiche_richiesta (
     ID INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     ID_richiesta INT UNSIGNED NOT NULL,
     ID_specifica_categoria INT UNSIGNED NOT NULL,
-    valore VARCHAR(255) NOT NULL,  -- es: "16GB", "Intel i5" associo il valore della caratteristica della categoria desiderata
+    valore VARCHAR(255) NOT NULL, 
     FOREIGN KEY (ID_richiesta) REFERENCES richiestaAcquisto(ID) ON DELETE CASCADE,
     FOREIGN KEY (ID_specifica_categoria) REFERENCES specifica_categoria(ID) ON DELETE CASCADE
 );
@@ -106,6 +104,5 @@ CREATE TABLE ordine (
     FOREIGN KEY (ID_utente) REFERENCES utenteRegistrato(ID) ON DELETE CASCADE,
     FOREIGN KEY (ID_prodotto_candidato) REFERENCES prodottoCandidato(ID) ON DELETE CASCADE
 );
-
 
 
